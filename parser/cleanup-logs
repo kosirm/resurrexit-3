@@ -1,0 +1,215 @@
+#!/usr/bin/env python3
+"""
+Cleanup Old Log Files
+
+Simple utility to clean up old parsing log files.
+Usage: cleanup-logs [language] [--days N] [--dry-run]
+
+Examples:
+  cleanup-logs                    # Show all log files
+  cleanup-logs sl                 # Clean Slovenian logs older than 7 days
+  cleanup-logs hr --days 3        # Clean Croatian logs older than 3 days
+  cleanup-logs --dry-run          # Show what would be deleted without deleting
+"""
+
+import argparse
+import sys
+import os
+from pathlib import Path
+from datetime import datetime, timedelta
+
+
+def find_project_root() -> Path:
+    """Find the project root directory (contains both 'lang' and 'parser' folders)"""
+    current = Path(__file__).parent
+    
+    # Go up until we find a directory with both 'lang' and 'parser'
+    while current.parent != current:  # Not at filesystem root
+        if (current / 'lang').exists() and (current / 'parser').exists():
+            return current
+        current = current.parent
+    
+    # If not found, assume we're in the parser directory and go up one level
+    project_root = Path(__file__).parent.parent
+    if (project_root / 'lang').exists():
+        return project_root
+    
+    raise FileNotFoundError("Could not find project root with 'lang' and 'parser' directories")
+
+
+def find_log_files(language_code: str = None) -> list:
+    """Find all parsing log files"""
+    project_root = find_project_root()
+    log_files = []
+    
+    # Search in all language directories or specific language
+    if language_code:
+        lang_dirs = [project_root / 'lang' / language_code]
+    else:
+        lang_dirs = [d for d in (project_root / 'lang').iterdir() if d.is_dir()]
+    
+    for lang_dir in lang_dirs:
+        chordpro_dir = lang_dir / '04_chordpro'
+        if chordpro_dir.exists():
+            # Find timestamped log files
+            for log_file in chordpro_dir.glob('*_parsing_summary_*.log'):
+                log_files.append(log_file)
+            for log_file in chordpro_dir.glob('*_single_parse_*.log'):
+                log_files.append(log_file)
+            
+            # Also find old non-timestamped log files
+            for log_file in chordpro_dir.glob('*_parsing_summary.log'):
+                log_files.append(log_file)
+    
+    return sorted(log_files)
+
+
+def parse_timestamp_from_filename(filename: str) -> datetime:
+    """Parse timestamp from log filename"""
+    try:
+        # Extract timestamp from filename like "SL_parsing_summary_20250826_201030.log"
+        parts = filename.split('_')
+        if len(parts) >= 4:
+            date_part = parts[-2]  # 20250826
+            time_part = parts[-1].replace('.log', '')  # 201030
+            
+            if len(date_part) == 8 and len(time_part) == 6:
+                timestamp_str = f"{date_part}_{time_part}"
+                return datetime.strptime(timestamp_str, '%Y%m%d_%H%M%S')
+    except (ValueError, IndexError):
+        pass
+    
+    # Fallback to file modification time
+    return None
+
+
+def cleanup_logs(language_code: str = None, days: int = 7, dry_run: bool = False) -> None:
+    """Clean up old log files"""
+    log_files = find_log_files(language_code)
+    
+    if not log_files:
+        print("No log files found.")
+        return
+    
+    cutoff_date = datetime.now() - timedelta(days=days)
+    
+    print(f"🧹 Cleaning up log files older than {days} days ({cutoff_date.strftime('%Y-%m-%d %H:%M:%S')})")
+    if language_code:
+        print(f"   Language: {language_code.upper()}")
+    else:
+        print("   All languages")
+    
+    if dry_run:
+        print("   🔍 DRY RUN - No files will be deleted")
+    
+    print()
+    
+    deleted_count = 0
+    kept_count = 0
+    
+    for log_file in log_files:
+        # Try to parse timestamp from filename
+        file_timestamp = parse_timestamp_from_filename(log_file.name)
+        
+        if file_timestamp is None:
+            # Use file modification time as fallback
+            file_timestamp = datetime.fromtimestamp(log_file.stat().st_mtime)
+        
+        age_days = (datetime.now() - file_timestamp).days
+        
+        if file_timestamp < cutoff_date:
+            # File is old, delete it
+            if dry_run:
+                print(f"🗑️  Would delete: {log_file.name} (age: {age_days} days)")
+            else:
+                try:
+                    log_file.unlink()
+                    print(f"🗑️  Deleted: {log_file.name} (age: {age_days} days)")
+                except Exception as e:
+                    print(f"❌ Failed to delete {log_file.name}: {e}")
+                    continue
+            deleted_count += 1
+        else:
+            # File is recent, keep it
+            print(f"✅ Keeping: {log_file.name} (age: {age_days} days)")
+            kept_count += 1
+    
+    print()
+    print(f"📊 Summary:")
+    if dry_run:
+        print(f"   🗑️  Would delete: {deleted_count} files")
+    else:
+        print(f"   🗑️  Deleted: {deleted_count} files")
+    print(f"   ✅ Kept: {kept_count} files")
+
+
+def list_logs(language_code: str = None) -> None:
+    """List all log files with details"""
+    log_files = find_log_files(language_code)
+    
+    if not log_files:
+        print("No log files found.")
+        return
+    
+    print(f"📊 Found {len(log_files)} log file(s)")
+    if language_code:
+        print(f"   Language: {language_code.upper()}")
+    else:
+        print("   All languages")
+    print()
+    
+    for log_file in log_files:
+        # Try to parse timestamp from filename
+        file_timestamp = parse_timestamp_from_filename(log_file.name)
+        
+        if file_timestamp is None:
+            # Use file modification time as fallback
+            file_timestamp = datetime.fromtimestamp(log_file.stat().st_mtime)
+        
+        age_days = (datetime.now() - file_timestamp).days
+        file_size = log_file.stat().st_size
+        
+        print(f"📄 {log_file.name}")
+        print(f"   📅 Created: {file_timestamp.strftime('%Y-%m-%d %H:%M:%S')} (age: {age_days} days)")
+        print(f"   📏 Size: {file_size} bytes")
+        print(f"   📍 Path: {log_file}")
+        print()
+
+
+def main():
+    """Main CLI entry point"""
+    parser = argparse.ArgumentParser(
+        description="Clean up old parsing log files",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  cleanup-logs                    # List all log files
+  cleanup-logs sl                 # Clean Slovenian logs older than 7 days
+  cleanup-logs hr --days 3        # Clean Croatian logs older than 3 days
+  cleanup-logs --dry-run          # Show what would be deleted without deleting
+  cleanup-logs sl --days 1 --dry-run  # Preview cleanup of Slovenian logs older than 1 day
+        """
+    )
+    
+    # Optional language argument
+    parser.add_argument("language", nargs='?',
+                       help="Language code (sl, hr, de, it, es, etc.) - if not specified, all languages")
+    
+    # Optional arguments
+    parser.add_argument("--days", "-d", type=int, default=7,
+                       help="Delete log files older than N days (default: 7)")
+    parser.add_argument("--dry-run", "-n", action="store_true",
+                       help="Show what would be deleted without actually deleting")
+    parser.add_argument("--list", "-l", action="store_true",
+                       help="Just list all log files without cleaning")
+    
+    args = parser.parse_args()
+    
+    if args.list:
+        list_logs(args.language)
+    else:
+        cleanup_logs(args.language, args.days, args.dry_run)
+
+
+if __name__ == "__main__":
+    main()

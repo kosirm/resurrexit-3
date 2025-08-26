@@ -1,0 +1,280 @@
+#!/usr/bin/env python3
+"""
+Parse Single File
+
+Simple CLI for parsing a single PDF file using the improved universal parser.
+Usage: parsefile <language_code> <file_number>
+
+Examples:
+  parsefile sl 001    # Parse SL - 001.pdf
+  parsefile hr 042    # Parse HR - 042.pdf
+"""
+
+import argparse
+import logging
+import sys
+import os
+from pathlib import Path
+from datetime import datetime
+
+# Add the parser directory to Python path
+parser_dir = Path(__file__).parent
+sys.path.insert(0, str(parser_dir))
+
+try:
+    from parsers.improved_universal_parser import ImprovedUniversalParser
+    from languages.slovenian.config import SlovenianConfig
+    from languages.croatian.config import CroatianConfig
+except ImportError as e:
+    print(f"❌ Import error: {e}")
+    print("Make sure you're running this from the correct directory")
+    sys.exit(1)
+
+
+def setup_logging(verbose: bool = False, debug: bool = False) -> None:
+    """Setup logging configuration"""
+    if debug:
+        level = logging.DEBUG
+    elif verbose:
+        level = logging.INFO
+    else:
+        level = logging.WARNING
+    
+    logging.basicConfig(
+        level=level,
+        format='%(asctime)s - %(levelname)s - %(message)s',
+        datefmt='%H:%M:%S'
+    )
+    
+    # Reduce noise from some modules
+    logging.getLogger('fitz').setLevel(logging.WARNING)
+
+
+def get_language_config(language_code: str):
+    """Get language configuration for the given language code"""
+    language_map = {
+        'sl': SlovenianConfig,
+        'slovenian': SlovenianConfig,
+        'hr': CroatianConfig,
+        'croatian': CroatianConfig,
+        # Add more languages as they're implemented
+        # 'de': GermanConfig,
+        # 'it': ItalianConfig,
+        # 'es': SpanishConfig,
+    }
+    
+    config_class = language_map.get(language_code.lower())
+    if not config_class:
+        available = ', '.join(language_map.keys())
+        raise ValueError(f"Unsupported language: {language_code}. Available: {available}")
+    
+    return config_class()
+
+
+def find_project_root() -> Path:
+    """Find the project root directory (contains both 'lang' and 'parser' folders)"""
+    current = Path(__file__).parent
+    
+    # Go up until we find a directory with both 'lang' and 'parser'
+    while current.parent != current:  # Not at filesystem root
+        if (current / 'lang').exists() and (current / 'parser').exists():
+            return current
+        current = current.parent
+    
+    # If not found, assume we're in the parser directory and go up one level
+    project_root = Path(__file__).parent.parent
+    if (project_root / 'lang').exists():
+        return project_root
+    
+    raise FileNotFoundError("Could not find project root with 'lang' and 'parser' directories")
+
+
+def sanitize_filename(title: str) -> str:
+    """Sanitize song title for use in filename"""
+    import re
+    # Remove or replace problematic characters
+    sanitized = re.sub(r'[<>:"/\\|?*]', '', title)  # Remove invalid filename chars
+    sanitized = re.sub(r'\s+', ' ', sanitized)  # Normalize whitespace
+    sanitized = sanitized.strip()
+    
+    # Limit length to avoid filesystem issues
+    if len(sanitized) > 100:
+        sanitized = sanitized[:100].strip()
+    
+    return sanitized
+
+
+def extract_chords_from_song(song) -> list:
+    """Extract unique chords from a song"""
+    chords = set()
+    for verse in song.verses:
+        for line in verse.lines:
+            for chord in line.chords:
+                chords.add(chord.chord)
+    return sorted(list(chords))
+
+
+def log_single_file_parse(chordpro_dir: Path, language_code: str, filename: str, title: str, verses: int, chords: str) -> None:
+    """Log single file parsing to timestamped summary log"""
+    from datetime import datetime
+
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    log_file = chordpro_dir / f"{language_code.upper()}_single_parse_{timestamp}.log"
+
+    # Create or append to log file
+    with open(log_file, 'a', encoding='utf-8') as f:
+        # Add header if file is new
+        if log_file.stat().st_size == 0:
+            f.write(f"# {language_code.upper()} Single File Parsing Log\n")
+            f.write(f"# Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            f.write(f"# Timestamp: {timestamp}\n")
+            f.write("# Format: FILENAME | TITLE | VERSES | CHORDS\n")
+            f.write("-" * 80 + "\n")
+
+        # Add the parsing entry
+        f.write(f"{filename} | {title} | {verses} verses | {chords}\n")
+
+
+def process_single_file(language_code: str, file_number: str, verbose: bool = False, force: bool = False, debug: bool = False) -> int:
+    """Process a single PDF file"""
+    try:
+        # Get language configuration
+        config = get_language_config(language_code)
+        parser = ImprovedUniversalParser(config)
+        
+        # Find project root and construct paths
+        project_root = find_project_root()
+        lang_dir = project_root / 'lang' / language_code
+        pdf_dir = lang_dir / '03_pdf'
+        chordpro_dir = lang_dir / '04_chordpro'
+        
+        # Create output directory if it doesn't exist
+        chordpro_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Find the PDF file
+        pdf_pattern = f"{language_code.upper()} - {file_number}.pdf"
+        pdf_file = pdf_dir / pdf_pattern
+        
+        if not pdf_file.exists():
+            print(f"❌ PDF file not found: {pdf_file}")
+            return 1
+        
+        print(f"🎵 Processing single file: {pdf_file.name}")
+        print(f"📁 Input:  {pdf_dir}")
+        print(f"📁 Output: {chordpro_dir}")
+        print()
+        
+        try:
+            # Parse the PDF first to get the title
+            song = parser.parse(str(pdf_file))
+            
+            # Create filename with title: "HR - 001 - SONG_TITLE.chordpro"
+            sanitized_title = sanitize_filename(song.title)
+            if sanitized_title and sanitized_title != "Untitled Song":
+                chordpro_filename = f"{pdf_file.stem} - {sanitized_title}.chordpro"
+            else:
+                chordpro_filename = f"{pdf_file.stem}.chordpro"
+            
+            chordpro_file = chordpro_dir / chordpro_filename
+            
+            # Skip if output exists and not forcing
+            if chordpro_file.exists() and not force:
+                print(f"⏭️  File already exists: {chordpro_file.name}")
+                print("Use --force to overwrite")
+                return 0
+            
+            # Export to ChordPro
+            chordpro_content = parser.export_chordpro(song)
+            
+            # Save to file
+            with open(chordpro_file, 'w', encoding='utf-8') as f:
+                f.write(chordpro_content)
+            
+            # Extract chords for summary
+            chords_used = extract_chords_from_song(song)
+            chords_str = ', '.join(chords_used) if chords_used else 'none'
+
+            # Log to timestamped summary file
+            log_single_file_parse(chordpro_dir, language_code, chordpro_file.name, song.title, len(song.verses), chords_str)
+
+            print(f"✅ Saved: {chordpro_file.name}")
+            print(f"📊 Title: {song.title}")
+            print(f"📊 Verses: {len(song.verses)}")
+            print(f"📊 Chords: {chords_str}")
+
+            if verbose:
+                print(f"📄 File size: {chordpro_file.stat().st_size} bytes")
+                print(f"📍 Full path: {chordpro_file}")
+
+                # Show log file location
+                timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                log_file = chordpro_dir / f"{language_code.upper()}_single_parse_{timestamp}.log"
+                print(f"📊 Logged to: {log_file}")
+
+            return 0
+            
+        except Exception as e:
+            print(f"❌ Failed to process {pdf_file.name}: {str(e)}")
+            if debug:
+                import traceback
+                traceback.print_exc()
+            return 1
+        
+    except Exception as e:
+        print(f"❌ Error: {str(e)}")
+        if debug:
+            import traceback
+            traceback.print_exc()
+        return 1
+
+
+def main():
+    """Main CLI entry point"""
+    parser = argparse.ArgumentParser(
+        description="Parse a single PDF file to ChordPro format",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  parsefile sl 001              # Parse SL - 001.pdf
+  parsefile hr 042              # Parse HR - 042.pdf
+  parsefile sl 123 --verbose    # Parse with detailed output
+  parsefile hr 007 --force      # Parse and overwrite existing file
+
+File Structure:
+  git/
+  ├── lang/
+  │   ├── sl/
+  │   │   ├── 03_pdf/      (SL - 001.pdf, SL - 002.pdf, ...)
+  │   │   └── 04_chordpro/ (SL - 001 - TITLE.chordpro, ...)
+  │   └── hr/
+  │       ├── 03_pdf/      (HR - 001.pdf, HR - 002.pdf, ...)
+  │       └── 04_chordpro/ (HR - 001 - TITLE.chordpro, ...)
+  └── parser/              (this script and parser code)
+        """
+    )
+    
+    # Required arguments
+    parser.add_argument("language", 
+                       help="Language code (sl, hr, de, it, es, etc.)")
+    parser.add_argument("file_number", 
+                       help="File number (001, 042, 123, etc.)")
+    
+    # Optional arguments
+    parser.add_argument("--verbose", "-v", action="store_true",
+                       help="Enable verbose output")
+    parser.add_argument("--force", "-f", action="store_true",
+                       help="Overwrite existing ChordPro file")
+    parser.add_argument("--debug", "-d", action="store_true",
+                       help="Enable debug logging (very verbose)")
+    
+    args = parser.parse_args()
+    
+    # Setup logging
+    setup_logging(args.verbose, args.debug)
+    
+    # Process the single file
+    return process_single_file(args.language, args.file_number, args.verbose, args.force, args.debug)
+
+
+if __name__ == "__main__":
+    sys.exit(main())
