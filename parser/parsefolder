@@ -156,7 +156,7 @@ def create_summary_log(chordpro_dir: Path, language_code: str) -> Path:
         f.write(f"# {language_code.upper()} Parsing Summary Log\n")
         f.write(f"# Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
         f.write(f"# Timestamp: {timestamp}\n")
-        f.write("# Format: FILENAME | TITLE | VERSES | CHORDS\n")
+        f.write("# Format: FILENAME | TITLE | ROLES | VERSES | CHORDS\n")
         f.write("-" * 80 + "\n")
 
     return log_file
@@ -271,13 +271,18 @@ def process_language_folder(language_code: str, verbose: bool = False, force: bo
                 chords_used = extract_chords_from_song(song)
                 chords_str = ', '.join(chords_used) if chords_used else 'none'
 
+                # Calculate roles and verses counts
+                roles_count = len(song.verses)  # Number of role markers (K., Z., etc.)
+                verses_count = sum(len(verse.lines) for verse in song.verses)  # Total verse lines
+
                 # Log to summary file
                 with open(summary_log, 'a', encoding='utf-8') as f:
-                    f.write(f"{chordpro_file.name} | {song.title} | {len(song.verses)} verses | {chords_str}\n")
+                    f.write(f"{chordpro_file.name} | {song.title} | {roles_count} roles | {verses_count} verses | {chords_str}\n")
 
                 print(f"   ✅ Saved: {chordpro_file.name}")
                 print(f"   📊 Title: {song.title}")
-                print(f"   📊 Verses: {len(song.verses)}")
+                print(f"   📊 Roles: {roles_count}")
+                print(f"   📊 Verses: {verses_count}")
                 print(f"   📊 Chords: {chords_str}")
 
                 processed += 1

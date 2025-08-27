@@ -106,9 +106,12 @@ class ImprovedUniversalParser:
         # Extract kapodaster from kapodaster lines
         kapodaster = self._extract_kapodaster_from_classified_lines(kapodaster_lines)
         
+        # Move inline comments from comment_lines to text_lines for proper processing
+        text_lines, comment_lines = self._separate_inline_comments(text_lines, comment_lines)
+
         # Extract comments from comment lines (should be at the bottom)
         comments = self._extract_comments_from_classified_lines(comment_lines)
-        
+
         # Parse verses with span-based chord positioning (only from text_lines)
         verses = self._parse_verses_with_span_positioning(text_lines, chord_lines, customization)
         
@@ -125,12 +128,15 @@ class ImprovedUniversalParser:
         """Extract title from classified title lines"""
         if not title_lines:
             return song_name or "Untitled Song"
-        
+
         # Sort by Y coordinate (top to bottom) and take the first (topmost) title
         title_lines_sorted = sorted(title_lines, key=lambda x: x['y'])
-        title = title_lines_sorted[0]['text'].strip()
-        
-        self.logger.debug(f"📋 TITLE (from classification): '{title}'")
+        raw_title = title_lines_sorted[0]['text'].strip()
+
+        # Apply language-specific normalization and encoding fixes
+        title = self.config.normalize_title(raw_title)
+
+        self.logger.debug(f"📋 TITLE (raw): '{raw_title}' -> (normalized): '{title}'")
         return title
     
     def _extract_kapodaster_from_classified_lines(self, kapodaster_lines: List[Dict]) -> str:
@@ -146,18 +152,24 @@ class ImprovedUniversalParser:
         return kapodaster
     
     def _extract_comments_from_classified_lines(self, comment_lines: List[Dict]) -> List[Comment]:
-        """Extract comments from classified comment lines"""
+        """Extract comments from classified comment lines, filtering out inline comments"""
         if not comment_lines:
             return []
-        
+
         # Sort by Y coordinate (top to bottom) to maintain order
         comment_lines_sorted = sorted(comment_lines, key=lambda x: x['y'])
-        
+
         comments = []
         for line in comment_lines_sorted:
             text = line['text'].strip()
+
+            # Skip inline comments (C: comments) - they should be handled as verses, not end comments
+            if self._is_inline_comment(text):
+                self.logger.debug(f"💬 Skipping inline comment in comment processing: '{text}'")
+                continue
+
             comments.append(Comment(text=text, comment_type="general"))
-        
+
         self.logger.debug(f"💬 COMMENTS (from classification): {len(comments)} found")
         return comments
     
@@ -236,7 +248,15 @@ class ImprovedUniversalParser:
                         # Stop if we hit another role marker
                         if self._extract_role_marker(next_text):
                             break
-                        
+
+                        # Stop if we hit an inline comment - it should be processed separately
+                        if self._is_inline_comment(next_text):
+                            break
+
+                        # Stop if we hit an asterisk marker - it should be processed separately
+                        if self._is_asterisk_marker(next_text):
+                            break
+
                         # This is text content for the current role
                         chords = self._find_chords_with_span_positioning(next_line_data, chord_lines)
                         
@@ -252,7 +272,72 @@ class ImprovedUniversalParser:
                         self.logger.debug(f"    📝 Added text line: '{next_text.strip()[:50]}...'")
                         
                         j += 1
-            
+
+            elif self._is_inline_comment(text):
+                # Handle inline comment (C: COMMENT TEXT) - even within existing verses
+                # Save previous verse if exists
+                if current_verse_lines and current_role:
+                    verses.append(Verse(role=current_role, lines=current_verse_lines, verse_type="verse"))
+                    current_verse_lines = []
+                    current_role = ""
+
+                # Create inline comment as a standalone verse with empty lines before and after
+                formatted_comment = self._format_inline_comment(text)
+                comment_verse_line = VerseLine(
+                    text=f"\n{formatted_comment}\n",  # Add empty lines before and after
+                    chords=[],  # Comments don't have chords
+                    original_line=text,
+                    line_type=None
+                )
+                verses.append(Verse(role="", lines=[comment_verse_line], verse_type="comment"))
+                processed_indices.add(i)
+                self.logger.debug(f"💬 Added inline comment: '{formatted_comment}'")
+
+            elif self._is_asterisk_marker(text):
+                # Handle multi-line asterisk comment (* or ** followed by multiple lines)
+                # Save previous verse if exists
+                if current_verse_lines and current_role:
+                    verses.append(Verse(role=current_role, lines=current_verse_lines, verse_type="verse"))
+                    current_verse_lines = []
+                    current_role = ""
+
+                # Collect the asterisk marker and following text lines
+                asterisk_marker = text.strip()
+                comment_text_lines = []
+                j = i + 1
+
+                # Look ahead for continuation lines (non-role, non-empty text)
+                while j < len(text_lines_sorted):
+                    next_line = text_lines_sorted[j]
+                    next_text = next_line['text'].strip()
+
+                    # Stop if we hit an empty line, role marker, or another asterisk
+                    if (not next_text or
+                        self._extract_role_marker(next_text) or
+                        self._is_asterisk_marker(next_text)):
+                        break
+
+                    comment_text_lines.append(next_text)
+                    processed_indices.add(j)
+                    j += 1
+
+                # Combine asterisk marker with collected text
+                if comment_text_lines:
+                    combined_text = f"{asterisk_marker} {' '.join(comment_text_lines)}"
+                else:
+                    combined_text = asterisk_marker
+
+                formatted_comment = f"{{comment: {combined_text}}}"
+                comment_verse_line = VerseLine(
+                    text=f"\n{formatted_comment}\n",  # Add empty lines before and after
+                    chords=[],  # Comments don't have chords
+                    original_line=text,
+                    line_type=None
+                )
+                verses.append(Verse(role="", lines=[comment_verse_line], verse_type="comment"))
+                processed_indices.add(i)
+                self.logger.debug(f"💬 Added multi-line asterisk comment: '{formatted_comment}'")
+
             elif current_role:
                 # Continuation line in current verse
                 if customization:
@@ -440,3 +525,48 @@ class ImprovedUniversalParser:
             result += lyric_text[lyric_pos:]
         
         return result
+
+    def _is_inline_comment(self, text: str) -> bool:
+        """Check if text line is an inline comment (contains C: anywhere in the text)"""
+        return 'C:' in text.strip()
+
+    def _is_asterisk_marker(self, text: str) -> bool:
+        """Check if text line is an asterisk marker (* or ** only)"""
+        text_clean = text.strip()
+        return text_clean == '*' or text_clean == '**'
+
+    def _format_inline_comment(self, text: str) -> str:
+        """Format inline comment by removing C: prefix and adding ChordPro comment format"""
+        comment_text = text.strip()
+
+        # Handle parentheses: (C: text) -> (text)
+        if comment_text.startswith('(') and comment_text.endswith(')'):
+            inner_text = comment_text[1:-1].strip()  # Remove outer parentheses
+            if inner_text.startswith('C:'):
+                inner_text = inner_text[2:].strip()  # Remove 'C:' prefix
+            comment_text = f"({inner_text})"  # Add parentheses back
+        # Handle plain C: text -> text
+        elif comment_text.startswith('C:'):
+            comment_text = comment_text[2:].strip()  # Remove 'C:' prefix
+
+        return f"{{comment: {comment_text}}}"
+
+    def _separate_inline_comments(self, text_lines: List[Dict], comment_lines: List[Dict]) -> tuple:
+        """Move inline comments (C: comments) from comment_lines to text_lines for proper processing"""
+        new_text_lines = list(text_lines)  # Copy existing text lines
+        new_comment_lines = []  # Only non-inline comments
+
+        for comment_line in comment_lines:
+            text = comment_line['text'].strip()
+            if self._is_inline_comment(text):
+                # This is an inline comment, move it to text_lines
+                new_text_lines.append(comment_line)
+                self.logger.debug(f"💬 Moved inline comment to text processing: '{text}'")
+            else:
+                # This is a regular comment, keep it in comment_lines
+                new_comment_lines.append(comment_line)
+
+        # Sort text_lines by Y position to maintain proper order
+        new_text_lines.sort(key=lambda x: x['y'])
+
+        return new_text_lines, new_comment_lines

@@ -1,15 +1,19 @@
 {title: LITANIJE SVIH SVETIH}
 
-K.	Gospodine, smiluj se[e][C]
+K.	G[e]ospodine, smilu[C]j se
 	Kriste, smiluj se
-	zbor ponavlja svaki zaziv
 	Gospodine, smiluj se
-	[e]Sveta Marijo[D], M[e]ajko Božja [C]Moli(te) za nas![D]
+	[e]Sveta Marijo, Majk[D]o Bo[e]žja
 	Sveti Mihovile,
 	[G]Sveti Božji [D]Anđel[e]i,
 	Sveti Ivane Krstitelju,
 	Sveti Josipe,
-	G Sveti Petre i Pavle,
+
+{comment: zbor ponavlja - nakon svakog retka: }
+
+Z.	[C]Moli(te) za na[D]s!
+
+K.	G Sveti Petre i Pavle,
 	Sveti Andrija,
 	Sveti Ivane,
 	G Sveta Marijo Magdaleno,
@@ -31,26 +35,32 @@ K.	Gospodine, smiluj se[e][C]
 	Sveta Terezijo Avilska,
 	G Svi sveci i svetice Božje,
 
-K.	[e][D][e]oslob[C]odi nas, Gosp[D]odine.
-	[e]Milostiv bud[D]i,[e][C][D]
+{comment: zbor - nakon svakog retka: }
+
+Z.	[C]oslobodi nas, Gosp[D]odine.
+
+K.	[e]Milostiv b[D]ud[e]i,
 	Od svakoga zla,
 	Od svakoga grijeha,
 	G Od smrti vječne,
 	Po utjelovljenju svojem,
 	Po smrti i uskrsnuću svojem,
 	G Po izljevu Duha Svetoga,
-	ako ima krštenika
-	}
-	[e]Da se dostojiš ove izabranike
-	[D][e]tebe molimo, usli i nas
-	preporoditi krsno[D]m[e] milošću,
-	ako nema krštenika
-	[e]Da se dostojiš ovaj preporodni studenac
+
+{comment: ako ima krštenika}
+
+Z.	[C]tebe molimo, usliši nas[D]
+
+{comment: ako nema krštenika}
+
+K.	[e]Da se dostojiš ovaj preporodni studenac
 	tvoje djece milošću svojom po[D]svet[e]iti
-	[G][D][e]t[C][D]ebe molimo, usliši nas
-	[G]Isuse, Sine Bog[D]a Živoga,[e][C][D]
-	[e][Ce][C]}
+
+Z.	t[C][D]ebe molimo, usliši nas
+
+K.	[G]Isuse, Sine B[D]oga Živo[e]ga,
 
 K.	[e]Kri[Ce]ste [C]čuj nas,
-	zbor ponavlja svaki zaziv
 	Kriste usliši nas.
+
+{comment: zbor ponavlja svaki zaziv}
