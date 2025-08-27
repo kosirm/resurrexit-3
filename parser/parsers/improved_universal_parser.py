@@ -12,6 +12,15 @@ from pathlib import Path
 from core.models import Song, Verse, VerseLine, Comment, Chord
 from core.improved_pdf_extractor import ImprovedPDFExtractor
 from languages.base_language import LanguageConfig
+from customizations.base_customization import customization_manager
+
+# Import customizations to register them
+try:
+    import customizations.hr_002_litanije
+    import customizations.sl_002_litanije
+except ImportError:
+    # Customizations are optional
+    pass
 
 
 class ImprovedUniversalParser:
@@ -51,21 +60,38 @@ class ImprovedUniversalParser:
     def parse(self, pdf_path: str, song_name: str = "") -> Song:
         """Parse PDF using improved span-based approach"""
         self.logger.info(f"Parsing PDF: {pdf_path}")
-        
+
+        # Get filename for customization lookup
+        filename = Path(pdf_path).name
+
+        # Check for file-specific customizations
+        customization = customization_manager.get_customization_for_file(filename)
+        if customization:
+            self.logger.info(f"Applying customization: {customization.get_description()}")
+
         # Extract span data from PDF
         span_data = self.pdf_extractor.extract(pdf_path)
-        
+
+        # Apply customizations to span data
+        if customization:
+            span_data = customization.customize_span_data(span_data)
+            span_data['text_lines'] = customization.customize_text_lines(span_data['text_lines'])
+
         # Parse into song structure using span-based positioning
-        song = self._parse_with_span_positioning(span_data, song_name)
-        
+        song = self._parse_with_span_positioning(span_data, song_name, customization)
+
         # Apply language-specific customizations
         if self.customizations:
             song.verses = self.customizations.apply_customizations(song.verses, None)
-        
+
+        # Apply final customizations to the song
+        if customization:
+            song = customization.customize_song(song)
+
         self.logger.info(f"Successfully parsed song: {song.title}")
         return song
     
-    def _parse_with_span_positioning(self, span_data: Dict, song_name: str) -> Song:
+    def _parse_with_span_positioning(self, span_data: Dict, song_name: str, customization=None) -> Song:
         """Parse using span-based positioning with enhanced classification"""
         
         chord_lines = span_data['chord_lines']
@@ -84,7 +110,7 @@ class ImprovedUniversalParser:
         comments = self._extract_comments_from_classified_lines(comment_lines)
         
         # Parse verses with span-based chord positioning (only from text_lines)
-        verses = self._parse_verses_with_span_positioning(text_lines, chord_lines)
+        verses = self._parse_verses_with_span_positioning(text_lines, chord_lines, customization)
         
         return Song(
             title=title,
@@ -135,7 +161,7 @@ class ImprovedUniversalParser:
         self.logger.debug(f"💬 COMMENTS (from classification): {len(comments)} found")
         return comments
     
-    def _parse_verses_with_span_positioning(self, text_lines: List[Dict], chord_lines: List[Dict]) -> List[Verse]:
+    def _parse_verses_with_span_positioning(self, text_lines: List[Dict], chord_lines: List[Dict], customization=None) -> List[Verse]:
         """Parse verses using span-based chord positioning - enhanced version"""
         verses = []
         current_verse_lines = []
@@ -155,7 +181,9 @@ class ImprovedUniversalParser:
             
             text_line_data = text_lines_sorted[i]
             text = text_line_data['text']
-            
+
+            # Debug output for quote lines (removed)
+
             if not text.strip():
                 i += 1
                 continue
@@ -227,19 +255,26 @@ class ImprovedUniversalParser:
             
             elif current_role:
                 # Continuation line in current verse
-                clean_text = text.strip()
-                
-                # Remove leading quotes and spaces for continuation lines
-                if clean_text.startswith('""'):
-                    clean_text = clean_text.replace('""', '').strip()
-                    clean_text = clean_text.replace('"', '').strip()
-                
+                if customization:
+                    # Let customization handle text processing (including stripping)
+                    clean_text = customization.customize_verse_text(text, text_line_data)
+                else:
+                    # Default behavior: Strip and remove leading quotes for continuation lines
+                    clean_text = text.strip()
+                    if clean_text.startswith('""'):
+                        clean_text = clean_text.replace('""', '').strip()
+                        clean_text = clean_text.replace('"', '').strip()
+
                 if clean_text:  # Only add if there's actual content
                     # Find chords using span-based positioning
                     chords = self._find_chords_with_span_positioning(text_line_data, chord_lines)
-                    
+
+                    # For customizations, use the customized text; otherwise use clean_text
+                    final_text = clean_text
+                    # Note: Quote spacing is now preserved by language-specific customizations
+
                     verse_line = VerseLine(
-                        text=clean_text,
+                        text=final_text,
                         chords=chords,
                         original_line=text,
                         line_type=None

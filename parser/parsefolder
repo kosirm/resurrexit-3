@@ -162,6 +162,50 @@ def create_summary_log(chordpro_dir: Path, language_code: str) -> Path:
     return log_file
 
 
+def _insert_processing_summary_to_log(log_file: Path, processed: int, skipped: int, failed: int, output_dir: Path):
+    """Insert processing summary into log file before the Format line"""
+    # Read the current log file content
+    with open(log_file, 'r', encoding='utf-8') as f:
+        lines = f.readlines()
+
+    # Find where to insert the processing summary (before the "# Format:" line)
+    format_line_index = -1
+    for i, line in enumerate(lines):
+        if line.startswith("# Format: FILENAME"):
+            format_line_index = i
+            break
+
+    if format_line_index == -1:
+        # Fallback: append at the end
+        with open(log_file, 'a', encoding='utf-8') as f:
+            f.write("\n📊 Processing Summary:\n")
+            f.write(f"   ✅ Processed: {processed} files\n")
+            if skipped > 0:
+                f.write(f"   ⏭️  Skipped: {skipped} files (use --force to overwrite)\n")
+            if failed > 0:
+                f.write(f"   ❌ Failed: {failed} files\n")
+            f.write(f"   📁 Output directory: {output_dir}\n")
+        return
+
+    # Insert processing summary before the Format line
+    summary_lines = [
+        "📊 Processing Summary:\n",
+        f"   ✅ Processed: {processed} files\n"
+    ]
+    if skipped > 0:
+        summary_lines.append(f"   ⏭️  Skipped: {skipped} files (use --force to overwrite)\n")
+    if failed > 0:
+        summary_lines.append(f"   ❌ Failed: {failed} files\n")
+    summary_lines.append(f"   📁 Output directory: {output_dir}\n")
+
+    # Insert the summary before the Format line
+    new_lines = lines[:format_line_index] + summary_lines + lines[format_line_index:]
+
+    # Write back to file
+    with open(log_file, 'w', encoding='utf-8') as f:
+        f.writelines(new_lines)
+
+
 def process_language_folder(language_code: str, verbose: bool = False, force: bool = False, debug: bool = False) -> int:
     """Process all PDFs in a language folder"""
     try:
@@ -255,7 +299,10 @@ def process_language_folder(language_code: str, verbose: bool = False, force: bo
         if failed > 0:
             print(f"   ❌ Failed: {failed} files")
         print(f"   📁 Output directory: {chordpro_dir}")
-        
+
+        # Add processing summary to log file (insert after header, before data)
+        _insert_processing_summary_to_log(summary_log, processed, skipped, failed, chordpro_dir)
+
         return 0 if failed == 0 else 1
 
     except Exception as e:

@@ -166,12 +166,12 @@ class ImprovedPDFExtractor:
         # Combine chord lines that are on the same Y position
         combined_chord_lines = self._combine_chord_lines_by_y_position(chord_lines)
 
-        # Combine consecutive quote mark lines (fix for Slovenian quote parsing)
-        combined_text_lines = self._combine_quote_mark_lines(text_lines)
+        # Note: Quote combining is now handled by file-specific customizations
+        # This allows for more precise control over different quote formats
 
         result = {
             'chord_lines': combined_chord_lines,
-            'text_lines': combined_text_lines,
+            'text_lines': text_lines,  # Let customizations handle quote combining
             'title_lines': title_lines,
             'kapodaster_lines': kapodaster_lines,
             'comment_lines': comment_lines

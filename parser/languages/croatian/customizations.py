@@ -176,9 +176,15 @@ class CroatianCustomizations(LanguageCustomizations):
         text = re.sub(r'\s+([,.!?;:])', r'\1', text)  # Remove space before punctuation
         text = re.sub(r'([,.!?;:])\s*', r'\1 ', text)  # Ensure space after punctuation
         
-        # Fix multiple spaces
-        text = re.sub(r'\s+', ' ', text)
-        
+        # Fix multiple spaces, but preserve spacing in quote lines (liturgical format)
+        if '"' in text and text.count('"') >= 3:
+            # This is likely a liturgical quote line - preserve original spacing
+            # Only normalize excessive spaces (more than 10 consecutive spaces)
+            text = re.sub(r' {10,}', '         ', text)  # Max 9 spaces
+        else:
+            # Normal text - collapse multiple spaces
+            text = re.sub(r'\s+', ' ', text)
+
         return text.strip()
     
     def _handle_croatian_special_cases(self, text: str, role: str) -> str:
