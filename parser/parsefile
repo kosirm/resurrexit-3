@@ -25,6 +25,7 @@ try:
     from parsers.improved_universal_parser import ImprovedUniversalParser
     from languages.slovenian.config import SlovenianConfig
     from languages.croatian.config import CroatianConfig
+    from languages.spanish.config import SpanishConfig
 except ImportError as e:
     print(f"❌ Import error: {e}")
     print("Make sure you're running this from the correct directory")
@@ -57,10 +58,11 @@ def get_language_config(language_code: str):
         'slovenian': SlovenianConfig,
         'hr': CroatianConfig,
         'croatian': CroatianConfig,
+        'es': SpanishConfig,
+        'spanish': SpanishConfig,
         # Add more languages as they're implemented
         # 'de': GermanConfig,
         # 'it': ItalianConfig,
-        # 'es': SpanishConfig,
     }
     
     config_class = language_map.get(language_code.lower())

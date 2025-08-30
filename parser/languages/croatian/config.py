@@ -46,6 +46,9 @@ class CroatianConfig(LanguageConfig):
         self.text_font_size_min = 10.0
         self.chord_font_size_min = 10.0
 
+        # Croatian-specific font metrics (based on working parser)
+        self.font_metrics = self._build_croatian_font_metrics()
+
         # Initialize customizations
         self.customizations = CroatianCustomizations()
         
@@ -153,3 +156,78 @@ class CroatianConfig(LanguageConfig):
             'chord_bracket_style': 'square',  # [chord] vs (chord)
             'comment_style': 'chordpro',      # {comment: text}
         }
+
+    def _build_croatian_font_metrics(self) -> Dict[str, Dict[str, float]]:
+        """Build Croatian-specific font metrics for character width calculations"""
+        return {
+            # Font metrics based on working Croatian parser
+            'default': {
+                'char_width': 6.0,  # Default character width in pixels
+                'space_width': 3.0,  # Space character width
+                'font_size_multiplier': 0.50,  # Multiplier for font size to char width
+            },
+
+            # Role-specific font metrics (Croatian roles are typically not bold)
+            'roles': {
+                'S.': {  # Solista - regular text
+                    'char_width': 6.0,
+                    'space_width': 3.0,
+                    'font_size_multiplier': 0.50,
+                    'is_bold': False,
+                },
+                'Z.': {  # Zbor - regular text
+                    'char_width': 6.0,
+                    'space_width': 3.0,
+                    'font_size_multiplier': 0.50,
+                    'is_bold': False,
+                },
+                'P.': {  # Puk - regular text
+                    'char_width': 6.0,
+                    'space_width': 3.0,
+                    'font_size_multiplier': 0.50,
+                    'is_bold': False,
+                },
+                'K.': {  # Kantor - regular text
+                    'char_width': 6.0,
+                    'space_width': 3.0,
+                    'font_size_multiplier': 0.50,
+                    'is_bold': False,
+                },
+            },
+
+            # Chord-specific metrics
+            'chords': {
+                'char_width': 5.5,  # Slightly smaller for chords
+                'space_width': 2.8,
+                'font_size_multiplier': 0.50,
+            },
+
+            # Title metrics
+            'title': {
+                'char_width': 7.0,
+                'space_width': 3.5,
+                'font_size_multiplier': 0.50,
+            },
+        }
+
+    def get_character_width(self, role: str = None, text_type: str = 'default', font_size: float = 12.0) -> float:
+        """Get character width for Croatian text based on role and context"""
+        metrics = self.font_metrics
+
+        # Get role-specific metrics
+        if role and role in metrics['roles']:
+            role_metrics = metrics['roles'][role]
+            base_width = role_metrics['char_width']
+            multiplier = role_metrics['font_size_multiplier']
+        elif text_type in metrics:
+            type_metrics = metrics[text_type]
+            base_width = type_metrics['char_width']
+            multiplier = type_metrics['font_size_multiplier']
+        else:
+            default_metrics = metrics['default']
+            base_width = default_metrics['char_width']
+            multiplier = default_metrics['font_size_multiplier']
+
+        # Adjust for font size
+        size_factor = font_size / 12.0  # Normalize to 12pt
+        return base_width * size_factor * multiplier

@@ -51,6 +51,9 @@ class ImprovedUniversalParser:
             elif self.config.language_code == "hr":
                 from languages.croatian.customizations import CroatianCustomizations
                 return CroatianCustomizations()
+            elif self.config.language_code == "es":
+                from languages.spanish.customizations import SpanishCustomizations
+                return SpanishCustomizations()
             else:
                 return None
         except ImportError:
