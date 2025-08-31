@@ -3,6 +3,7 @@ Spanish Language Configuration for PDF Parser
 Handles Spanish chord notation, role markers, and text processing
 """
 
+import re
 from typing import Dict, List, Set
 from ..base_language import LanguageConfig
 
@@ -55,39 +56,90 @@ class SpanishConfig(LanguageConfig):
 
     def _build_spanish_chords(self) -> List[str]:
         """Build comprehensive list of Spanish chords from the notation document"""
-        chords = []
-        
-        # Base chord names in Spanish notation
-        base_chords = ['DO', 'Do', 'Re', 'Mi', 'Fa', 'Sol', 'La', 'Si']
-        sharp_chords = ['Do#', 'Re#', 'Fa#', 'Sol#', 'La#']
-        flat_chords = ['Sib', 'Si b']  # Si bemol
-        
-        # Add all base chords
-        chords.extend(base_chords)
-        chords.extend(sharp_chords)
-        chords.extend(flat_chords)
-        
-        # Add minor chords (with -)
-        for chord in base_chords + sharp_chords + flat_chords:
-            chords.append(f"{chord}-")
-        
-        # Add chord extensions
-        extensions = ['7', '6', '7aum', 'dim', 'dism', '+5dim', '+9', '-6', '-7', '-9', '-5', '5/9dim', 'maj7']
-        
-        for base in base_chords + sharp_chords + flat_chords:
-            for ext in extensions:
-                chords.append(f"{base}{ext}")
-                chords.append(f"{base}-{ext}")  # Minor with extension
-        
-        # Add specific chords from the document that might not follow the pattern
-        specific_chords = [
-            'Re-6', 'Re-9', 'Mi-6', 'La-6', 'La-7', 'Sib6+5dim', 'Do#dim', 
-            'Re-5', 'Mi9', 'Sol7+9', 'Mi7', 'Fa7+5dim', 'Re-dim', 'La-5', 
-            'Fa#5/9dim', 'Sol-6', 'Fa#dism', 'Mi-7'
+        # Use the EXACT chords from the chord notation document
+        spanish_chords_from_document = [
+            # All chords from line 6 of the document (split by comma and cleaned)
+            'DO', 'Do7aum', 'Do7', 'Do6', 'Do-', 'Do#', 'Do#7aum', 'Do#7', 'Do#6', 'Do#-',
+            'Re', 'Re7aum', 'Re7', 'Re6', 'Re-', 'Re#', 'Re#7aum', 'Re#7', 'Re#6', 'Re#-',
+            'Mi', 'Mi7aum', 'Mi7', 'Mi6', 'Mi-',
+            'Fa', 'Fa7aum', 'Fa7', 'Fa6', 'Fa-', 'Fa#', 'Fa#7aum', 'Fa#7', 'Fa#6', 'Fa#-',
+            'Sol', 'Sol7aum', 'Sol7', 'Sol6', 'Sol-', 'Sol#', 'Sol#7aum', 'Sol#7', 'Sol#6', 'Sol#-',
+            'La', 'La7aum', 'La7', 'La6', 'La-', 'La#', 'La#7aum', 'La#7', 'La#6', 'La#-',
+            'Si', 'Si7aum', 'Si7', 'Si6', 'Si-',
+            # Complex chords from the document
+            'Re-6', 'Re-9', 'Mi-6', 'La-6', 'La-7', 'Sib6+5dim', 'Do#dim', 'Sol7', 'Re-5',
+            'Mi9', 'Sol7+9', 'Mi7', 'Fa7+5dim', 'Re-dim', 'La-5', 'Fa#5/9dim', 'Sol-6',
+            'Fa#dism', 'Mi-7'
         ]
-        chords.extend(specific_chords)
-        
-        return sorted(list(set(chords)))  # Remove duplicates and sort
+
+        # Add variations with different dash characters (en dash vs hyphen)
+        # Spanish uses en dash (–) but PDFs might have hyphen (-)
+        additional_variations = []
+        for chord in spanish_chords_from_document:
+            if '-' in chord:
+                # Add version with en dash
+                additional_variations.append(chord.replace('-', '–'))
+            if '–' in chord:
+                # Add version with hyphen
+                additional_variations.append(chord.replace('–', '-'))
+
+        all_chords = spanish_chords_from_document + additional_variations
+
+        # Add uppercase variations for major chords (from the table)
+        uppercase_variations = []
+        major_chord_map = {
+            'Do': 'DO', 'Re': 'RE', 'Mi': 'MI', 'Fa': 'FA',
+            'Sol': 'SOL', 'La': 'LA', 'Si': 'SI'
+        }
+
+        for chord in all_chords:
+            for mixed_case, upper_case in major_chord_map.items():
+                if chord.startswith(mixed_case) and not chord.startswith(mixed_case + '#'):
+                    uppercase_variations.append(chord.replace(mixed_case, upper_case, 1))
+
+        all_chords.extend(uppercase_variations)
+
+        # Add spaced chord extensions (e.g., "Mi– 6", "Re– 9", "La– 7")
+        spaced_extensions = []
+        base_chords_for_spacing = ['Do', 'Re', 'Mi', 'Fa', 'Sol', 'La', 'Si',
+                                  'Do#', 'Re#', 'Fa#', 'Sol#', 'La#']
+        extensions_for_spacing = ['6', '7', '9']
+
+        for base in base_chords_for_spacing:
+            for ext in extensions_for_spacing:
+                # Add both minor and major versions with spaces
+                spaced_extensions.append(f"{base}– {ext}")  # Minor with en dash
+                spaced_extensions.append(f"{base}- {ext}")   # Minor with hyphen
+                spaced_extensions.append(f"{base} {ext}")    # Major
+
+        all_chords.extend(spaced_extensions)
+
+        # Add common Spanish chord chains (pipe-separated)
+        chord_chains = [
+            'Do |Mi |Fa', 'Do |Mi |Fa Mi', 'Re |Sol |La', 'Mi |La |Si',
+            'Fa |Sol |Do', 'Sol |Do |Re', 'La |Re |Mi', 'Si |Mi |Fa#',
+            # Add minor chord chains
+            'Do– |Mi– |Fa–', 'Re– |Sol– |La–', 'Mi– |La– |Si–',
+            # Mixed major/minor chains
+            'Do |Mi– |Fa', 'Re |Sol– |La', 'Mi– |La |Si',
+        ]
+        all_chords.extend(chord_chains)
+
+        return sorted(list(set(all_chords)))  # Remove duplicates and sort
+
+    def requires_chord_chain_processing(self, filename: str) -> bool:
+        """Check if a specific file requires chord chain processing"""
+        # List of files that contain chord chains (Do |Mi |Fa patterns)
+        chord_chain_files = {
+            'ES - 020',  # AVE MARÍA II (1984) - has Do |Mi |Fa chord chains
+            # Add more files here as needed when chord chains are discovered
+            # 'ES - XXX',  # Another file with chord chains
+        }
+
+        # Extract base filename without extension
+        base_filename = filename.replace('.pdf', '').replace('.chordpro', '')
+
+        return base_filename in chord_chain_files
 
     def _build_spanish_font_metrics(self) -> Dict[str, Dict[str, float]]:
         """Build Spanish-specific font metrics for character width calculations"""

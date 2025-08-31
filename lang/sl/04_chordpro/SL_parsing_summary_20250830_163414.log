@@ -1,0 +1,236 @@
+# SL Parsing Summary Log
+# Generated: 2025-08-30 16:34:14
+# Timestamp: 20250830_163414
+📊 Processing Summary:
+   ✅ Processed: 227 files
+   ⏭️  Skipped: 5 files (use --force to overwrite)
+   📁 Output directory: C:\Dev\__RESURREXIT\git\lang\sl\04_chordpro
+# Format: FILENAME | TITLE | ROLES | VERSES | CHORDS
+--------------------------------------------------------------------------------
+SL - 006 - SVET (med letom).chordpro | SVET (med letom) | 5 roles | 16 verses | E, F, G, a
+SL - 007 - SVET JE GOSPOD - SVET IZ BARAK (Adventni čas).chordpro | SVET JE GOSPOD - SVET IZ BARAK (Adventni čas) | 6 roles | 18 verses | A, E, E7, F, a
+SL - 008 - SVET SVET SVET - HOZANA CVETNE NEDELJE (in velikonočnega časa).chordpro | SVET SVET SVET - HOZANA CVETNE NEDELJE (in velikonočnega časa) | 5 roles | 18 verses | A, A7, d, g
+SL - 009 - SVET, SVET, SVET (1988).chordpro | SVET, SVET, SVET (1988) | 11 roles | 16 verses | E, F, G, a
+SL - 010 - SVET (1983).chordpro | SVET (1983) | 5 roles | 18 verses | E, F, G, a, d
+SL - 011 - DRUGA EVHARISTIČNA MOLITEV (1).chordpro | DRUGA EVHARISTIČNA MOLITEV (1) | 18 roles | 65 verses | A7, C, D, E, E7, F, G, H7, a, d, e, g
+SL - 012 - BLAGOSLOV KRSTNE VODE.chordpro | BLAGOSLOV KRSTNE VODE | 8 roles | 50 verses | C, D, H7, a, e
+SL - 013 - VELIKONOČNI HVALOSPEV.chordpro | VELIKONOČNI HVALOSPEV | 16 roles | 74 verses | C, E, F, G, a
+SL - 014 - VELIKONOČNI EVHARISTIČNI HVALOSPEV.chordpro | VELIKONOČNI EVHARISTIČNI HVALOSPEV | 9 roles | 28 verses | E, E7, F, G, a, d
+SL - 015 - PESEM ADVENTNIH HVALNIC DO 16. DECEMBRA.chordpro | PESEM ADVENTNIH HVALNIC DO 16. DECEMBRA | 5 roles | 21 verses | G, a
+SL - 016 - PESEM ADVENTNIH HVALNIC PO 16. DECEMBRU.chordpro | PESEM ADVENTNIH HVALNIC PO 16. DECEMBRU | 6 roles | 21 verses | G, a
+SL - 017 - PESEM PRI HVALNICAH MED PASHO IN VNEBOHODOM.chordpro | PESEM PRI HVALNICAH MED PASHO IN VNEBOHODOM | 10 roles | 23 verses | E, F, G, a
+SL - 018 - PESEM VEČERNIC DO GOSPODOVEGA VNEBOVHODA.chordpro | PESEM VEČERNIC DO GOSPODOVEGA VNEBOVHODA | 11 roles | 29 verses | E, F, G, a
+SL - 019 - PESEM VEČERNIC VNEBOHODA.chordpro | PESEM VEČERNIC VNEBOHODA | 7 roles | 19 verses | G, a
+SL - 020 - BINKOŠTNA HVALNICA PRIDI, STVARNIK SVETI DUH.chordpro | BINKOŠTNA HVALNICA: PRIDI, STVARNIK SVETI DUH | 11 roles | 29 verses | G, a
+SL - 021 - PESEM PRI BINKOŠTNIH HVALNICAH.chordpro | PESEM PRI BINKOŠTNIH HVALNICAH | 11 roles | 29 verses | G, a
+SL - 022 - BINKOŠTNA SLEDNICA (PRIDI, SVETI DUH, PRIDI).chordpro | BINKOŠTNA SLEDNICA (PRIDI, SVETI DUH, PRIDI) | 13 roles | 32 verses | C, E, F
+SL - 023 - DRUGA EVHARISTIČNA MOLITEV (2).chordpro | DRUGA EVHARISTIČNA MOLITEV (2) | 18 roles | 90 verses | A, A7, F, G, a, d, e, g, h
+SL - 024 - VELIKONOČNI ALELUJA.chordpro | VELIKONOČNI ALELUJA | 6 roles | 8 verses | A, D
+SL - 025 - ALELUJA PRED EVANGELIJEM.chordpro | ALELUJA PRED EVANGELIJEM | 7 roles | 10 verses | A, A7, D, G, a, e, h
+SL - 026 - ODPEV PRED EVANGELIJEM V POSTNEM ČASU.chordpro | ODPEV PRED EVANGELIJEM V POSTNEM ČASU | 2 roles | 10 verses | A, D, G
+SL - 027 - TE DEUM.chordpro | TE DEUM | 2 roles | 43 verses | C, E, E7, G, a
+SL - 028 - JAGNJE BOŽJE (med lomljenjem kruha).chordpro | JAGNJE BOŽJE (med lomljenjem kruha) | 3 roles | 7 verses | E, F, G, a
+SL - 029 - APOSTOLSKA VEROIZPOVED – K2.chordpro | APOSTOLSKA VEROIZPOVED – K2 | 1 roles | 7 verses | C, E, EE, F, G, a, e
+SL - 030 - OČENAŠ.chordpro | OČENAŠ | 1 roles | 5 verses | A, B, F, a, d, g
+SL - 031 - KRISTUS JE VSTAL (1 Kor 15).chordpro | KRISTUS JE VSTAL (1 Kor 15) | 9 roles | 23 verses | E, F, G, a
+SL - 032 - K TEBI GREMO, SVETO MESTO.chordpro | K TEBI GREMO, SVETO MESTO* | 3 roles | 13 verses | E, E7, F, G, a
+SL - 033 - POT JE TRDA.chordpro | POT JE TRDA* | 5 roles | 17 verses | A7, E, E7, F, a, d
+SL - 034 - IZ GLOBOČINE VPIJEM K TEBI - Ps 129 (130).chordpro | IZ GLOBOČINE VPIJEM K TEBI - Ps 129 (130) | 11 roles | 32 verses | E7, F, G, a, d
+SL - 035 - JOZUETOVA PESEM (Joz 24,2-13).chordpro | JOZUETOVA PESEM (Joz 24,2-13) | 7 roles | 24 verses | A, C, CIS, D, E, H7, e, fis, gis
+SL - 036 - BLAGOSLAVLJAJ, MOJA DUŠA, JAHVEJA - Ps 102 (103).chordpro | BLAGOSLAVLJAJ, MOJA DUŠA, JAHVEJA - Ps 102 (103) | 3 roles | 13 verses | E, a, d
+SL - 037 - DOKLEJ - Ps 12 (13).chordpro | DOKLEJ? - Ps 12 (13) | 8 roles | 18 verses | E, E7, a
+SL - 038 - JAHVE, TI SI MOJ BOG (Iz 25,1-8).chordpro | JAHVE, TI SI MOJ BOG (Iz 25,1-8) | 7 roles | 16 verses | E7, F, G, a
+SL - 039 - ZAPOJMO, ZAPOJMO (2 Mz 15,1-2).chordpro | ZAPOJMO, ZAPOJMO (2 Mz 15,1-2) | 3 roles | 17 verses | A, D, E, E7, H7
+SL - 040 - MOJA MOLITEV NAJ PRIDE K TEBI - Ps 118 (119).chordpro | MOJA MOLITEV NAJ PRIDE K TEBI - Ps 118 (119) | 2 roles | 13 verses | E, F, G, a
+SL - 041 - GLEJTE, KAKO LEPO JE - Ps 132 (133).chordpro | GLEJTE, KAKO LEPO JE - Ps 132 (133) | 1 roles | 12 verses | C, D, DG, G, H7, a, e, h
+SL - 042 - KAKO LEPO JE, KAKŠNO VESELJE - Ps 132 (133).chordpro | KAKO LEPO JE, KAKŠNO VESELJE - Ps 132 (133) | 10 roles | 15 verses | E, F, G, a, d
+SL - 043 - POGLEJTE, KAK' DOBRA - Ps 132 (133).chordpro | POGLEJTE, KAK' DOBRA - Ps 132 (133) | 9 roles | 26 verses | C, H7, a, e
+SL - 044 - HVALA JAHVEJU - Ps 135 (136).chordpro | HVALA JAHVEJU - Ps 135 (136) | 30 roles | 33 verses | C, D, G, H7, a, e, h
+SL - 045 - PESEM TREH MLADENIČEV (Dn 3,52-57).chordpro | PESEM TREH MLADENIČEV (Dn 3,52-57) | 16 roles | 24 verses | A, C, D, E, G, H, H7, e, fis
+SL - 046 - PESEM TREH MLADENIČEV (Dn 3,57-88).chordpro | PESEM TREH MLADENIČEV (Dn 3,57-88) | 19 roles | 48 verses | E7, a
+SL - 047 - HVALITE GOSPODA IZ NEBES - Ps 148.chordpro | HVALITE GOSPODA IZ NEBES - Ps 148 * | 7 roles | 34 verses | A, fis
+SL - 048 - HVALITE BOGA, ALELUJA - Ps 150.chordpro | HVALITE BOGA, ALELUJA - Ps 150 | 7 roles | 17 verses | A, D, E
+SL - 049 - GOSPOD JE MOJA LUČ IN REŠITEV - Ps 26 (27).chordpro | GOSPOD JE MOJA LUČ IN REŠITEV - Ps 26 (27) | 6 roles | 20 verses | A7, B, C, G, d, g
+SL - 050 - EVENU ŠALOM ALEHEM (Judovska pesem).chordpro | EVENU ŠALOM ALEHEM (Judovska pesem) | 7 roles | 18 verses | A, A7, d, g
+SL - 051 - ALELUJA, ŽE PRIHAJA KRALJESTVO (Raz 19,6-9).chordpro | ALELUJA, ŽE PRIHAJA KRALJESTVO (Raz 19,6-9) * | 8 roles | 23 verses | D7, G, H7, e
+SL - 052 - ABA, OČE (Rim 8,15-17).chordpro | ABA, OČE (Rim 8,15-17) | 4 roles | 15 verses | C, E, E7, F, G, G7, a, d
+SL - 053 - KDO NAS BO LOČIL (Rim 8,33-39).chordpro | KDO NAS BO LOČIL? (Rim 8,33-39) | 8 roles | 28 verses | E, E7, F, G, a
+SL - 054 - MAGNIFIKAT (Lk 1, 46-55).chordpro | MAGNIFIKAT (Lk 1, 46-55) | 9 roles | 26 verses | A, D, E
+SL - 055 - DVIGNIL BOM KELIH ODREŠENJA - Ps 114-115 (116).chordpro | DVIGNIL BOM KELIH ODREŠENJA - Ps 114-115 (116) | 6 roles | 35 verses | A, D, D7, E7, G, e, fis, h
+SL - 056 - KO JE GOSPOD - Ps 125 (126).chordpro | KO JE GOSPOD - Ps 125 (126) | 6 roles | 23 verses | A, D, D7, G, e
+SL - 057 - ZAHARIJEV HVALOSPEV (Lk 1,68-79).chordpro | ZAHARIJEV HVALOSPEV (Lk 1,68-79) | 7 roles | 30 verses | H7, a, e
+SL - 058 - SMRT, KJE JE TVOJA ZMAGA (1 Kor 15).chordpro | SMRT, KJE JE TVOJA ZMAGA? (1 Kor 15) | 10 roles | 38 verses | C, D, F, G, H, d, e, g
+SL - 059 - NEBESA, ROSITE Z VIŠAVE (Iz 45,8).chordpro | NEBESA, ROSITE Z VIŠAVE (Iz 45,8) | 17 roles | 35 verses | E, E7, F, G, a
+SL - 060 - BINKOŠTI.chordpro | BINKOŠTI | 6 roles | 31 verses | A, A7, B, C, F, G, d
+SL - 061 - GLEJ, PRIDEM KMALU (Raz 22,12-16).chordpro | GLEJ, PRIDEM KMALU (Raz 22,12-16) | 4 roles | 15 verses | A, CIS, E, H7, fis
+SL - 062 - PRIDI, SIN ČLOVEKOV (Raz 22,17).chordpro | PRIDI, SIN ČLOVEKOV (Raz 22,17) | 3 roles | 19 verses | C, H7, a, e
+SL - 063 - ABRAHAM (1 Mz 18,1-5).chordpro | ABRAHAM (1 Mz 18,1-5) | 4 roles | 36 verses | E, F, G, a, d
+SL - 064 - MOJZESOV HVALOSPEV (2 Mz 15,1-18).chordpro | MOJZESOV HVALOSPEV (2 Mz 15,1-18) | 16 roles | 55 verses | A7, C7, D7, F, G7
+SL - 065 - NE BOŠ PUSTIL MOJEGA ŽIVLJENJA V GROBU - Ps 15 (16).chordpro | NE BOŠ PUSTIL MOJEGA ŽIVLJENJA V GROBU - Ps 15 (16) | 6 roles | 17 verses | E, F, a, d
+SL - 066 - HVALITE GOSPODA, VSI NARODI ZEMLJE - Ps 116 (117).chordpro | HVALITE GOSPODA, VSI NARODI ZEMLJE - Ps 116 (117) | 4 roles | 12 verses | C, G, H7, a
+SL - 067 - KO JE IZRAEL ODŠEL IZ EGIPTA - Ps 113 A (114).chordpro | KO JE IZRAEL ODŠEL IZ EGIPTA - Ps 113 A (114) | 8 roles | 40 verses | A, D, E, F, FIS, G, GIS, H, a, cis, e, fis, h
+SL - 068 - VRATA, DVIGNITE - Ps 23 (24).chordpro | VRATA, DVIGNITE - Ps 23 (24) | 28 roles | 33 verses | A, E, G, H, a, e, h
+SL - 069 - GOSPOD JE MOJ PASTIR - Ps 22 (23).chordpro | GOSPOD JE MOJ PASTIR - Ps 22 (23) | 10 roles | 35 verses | E, E7, F, G, a
+SL - 070 - OB REKAH BABILONSKIH - Ps 136 (137).chordpro | OB REKAH BABILONSKIH - Ps 136 (137) | 5 roles | 35 verses | D, H7, a, e
+SL - 071 - MISERERE - Ps 50 (51).chordpro | MISERERE - Ps 50 (51) | 40 roles | 46 verses | a, e
+SL - 072 - USMILI SE ME, BOG - Ps 50 (51).chordpro | USMILI SE ME, BOG - Ps 50 (51) | 11 roles | 43 verses | D, a, e
+SL - 073 - JEZUS KRISTUS JE GOSPOD (Flp 2,1-11).chordpro | JEZUS KRISTUS JE GOSPOD (Flp 2,1-11) | 12 roles | 36 verses | C, D, G, H, H7, a, e
+SL - 074 - ZDRAVA MARIJA.chordpro | ZDRAVA MARIJA | 2 roles | 14 verses | C, E, F, a, d
+SL - 075 - ZDRAVA MARIJA (1984).chordpro | ZDRAVA MARIJA (1984) | 1 roles | 16 verses | C, E, F
+SL - 076 - TISTO MESTO PRI MENI.chordpro | TISTO MESTO PRI MENI | 4 roles | 26 verses | A, A7, D, FIS, G, e, fis
+SL - 077 - DVIGAM SVOJE OČI H GORAM - Ps 120 (121).chordpro | DVIGAM SVOJE OČI H GORAM - Ps 120 (121) | 7 roles | 26 verses | C, D, G, h
+SL - 078 - PESEM OSVOBOJENIH (Iz 12,4-6).chordpro | PESEM OSVOBOJENIH (Iz 12,4-6) | 7 roles | 11 verses | C, E, E7, F, G, a
+SL - 079 - ČE DANES SLIŠITE NJEGOV GLAS - Ps 94 (95).chordpro | ČE DANES SLIŠITE NJEGOV GLAS - Ps 94 (95) | 9 roles | 29 verses | C, E, G, a, d
+SL - 080 - PRIDITE, PREPEVAJMO GOSPODU - Ps 94 (95).chordpro | PRIDITE, PREPEVAJMO GOSPODU - Ps 94 (95) | 7 roles | 28 verses | A, A7, D, G, e
+SL - 081 - DAJENU.chordpro | DAJENU | 18 roles | 56 verses | C, D, H7, a, e
+SL - 082 - K VELIKONOČNI ŽRTVI.chordpro | K VELIKONOČNI ŽRTVI | 4 roles | 26 verses | A7, E, F, a, d
+SL - 083 - VELIKONOČNA HVALNICA.chordpro | VELIKONOČNA HVALNICA | 4 roles | 15 verses | E7, a, d
+SL - 084 - PESEM ADVENTNIH HVALNIC.chordpro | PESEM ADVENTNIH HVALNIC | 2 roles | 23 verses | E, a, d
+SL - 085 - URI, URI, URA.chordpro | URI, URI, URA | 9 roles | 21 verses | H7, e
+SL - 086 - PRIHAJA MOJ BOG.chordpro | PRIHAJA MOJ BOG | 9 roles | 24 verses | H7, e
+SL - 087 - AMEN - AMEN - AMEN (Raz 7,12-14).chordpro | AMEN - AMEN - AMEN (Raz 7,12-14) | 7 roles | 33 verses | C, D, D7, G, e, h
+SL - 088 - ČE GOSPOD NE ZIDA HIŠE - Ps 126 (127).chordpro | ČE GOSPOD NE ZIDA HIŠE - Ps 126 (127) | 8 roles | 17 verses | C, E, F, G, a
+SL - 089 - OKUSITE IN SPOZNAJTE - Ps 33 (34).chordpro | OKUSITE IN SPOZNAJTE - Ps 33 (34) | 6 roles | 16 verses | C, C7, H7, a, e
+SL - 090 - IZ LJUBEZNI DO SVOJIH BRATOV - PS 121 (122).chordpro | IZ LJUBEZNI DO SVOJIH BRATOV - PS 121 (122) | 10 roles | 24 verses | H7, a, e
+SL - 091 - UPAL, UPAL SEM V GOSPODA - Ps 39 (40).chordpro | UPAL, UPAL SEM V GOSPODA - Ps 39 (40) | 13 roles | 40 verses | E, F, a, e
+SL - 092 - JAZ BOM PEL - Ps 56 (57).chordpro | JAZ BOM PEL - Ps 56 (57) | 13 roles | 33 verses | A, D, G, e, fis
+SL - 093 - ZAKAJ SE LJUDSTVA UPIRAJO - Ps 2.chordpro | ZAKAJ SE LJUDSTVA UPIRAJO? - Ps 2 | 6 roles | 33 verses | H7, a, e
+SL - 094 - KAKOR KOŠUTA HREPENI - Ps 41-42 (42-43).chordpro | KAKOR KOŠUTA HREPENI - Ps 41-42 (42-43) | 5 roles | 31 verses | A, A7, D, FIS, G, GIS, H7, e, h
+SL - 095 - PRITRJUJTE GOSPODU - Ps 99 (100).chordpro | PRITRJUJTE GOSPODU - Ps 99 (100) | 9 roles | 14 verses | A7, F, G, d, e, g
+SL - 096 - VRISKAJTE IN POJTE (Iz 12,1 sl).chordpro | VRISKAJTE IN POJTE (Iz 12,1 sl) | 7 roles | 19 verses | E, F, G, a
+SL - 097 - KO SE ZBUDIM - Ps 16 (17).chordpro | KO SE ZBUDIM * - Ps 16 (17) | 9 roles | 42 verses | E, F, a, d
+SL - 098 - PESEM OTROK MED VELIKONOČNO VIGILIJO.chordpro | PESEM OTROK MED VELIKONOČNO VIGILIJO | 22 roles | 42 verses | E, a, d
+SL - 099 - NE BOM UMRL, AMPAK ŽIVEL - Ps 117 (118).chordpro | NE BOM UMRL, AMPAK ŽIVEL - Ps 117 (118) | 71 roles | 99 verses | C, G, H, H7, e
+SL - 100 - RECITE NJIM, KI SO OBUPANEGA SRCA (Iz 35,4-10).chordpro | RECITE NJIM, KI SO OBUPANEGA SRCA (Iz 35,4-10) | 8 roles | 22 verses | C, E, F, a, d, e
+SL - 101 - O BOG, TI SI MOJ BOG - Ps 62 (63).chordpro | O BOG, TI SI MOJ BOG - Ps 62 (63) | 9 roles | 23 verses | E, F, a, d
+SL - 102 - BOG SE DVIGA MED VZKLIKI - Ps 46 (47).chordpro | BOG SE DVIGA MED VZKLIKI - Ps 46 (47) | 5 roles | 14 verses | a, d
+SL - 103 - LJUDSTVO, KI JE HODILO V TEMI (Iz 9,1-5).chordpro | LJUDSTVO, KI JE HODILO V TEMI (Iz 9,1-5) | 4 roles | 25 verses | C, F, G, GIS, a
+SL - 104 - HVALI GOSPODA - Ps 145 (146).chordpro | HVALI GOSPODA - Ps 145 (146) | 9 roles | 22 verses | C, D, G, H7, e, h
+SL - 105 - BILEAMOVA PESEM (4 Mz 23,7-24).chordpro | BILEAMOVA PESEM (4 Mz 23,7-24) | 8 roles | 37 verses | D, G, e, h
+SL - 106 - VPRIČO ANGELOV - Ps 137 (138).chordpro | VPRIČO ANGELOV - Ps 137 (138) | 9 roles | 27 verses | C, E, F, G, d
+SL - 107 - KO JE BIL IZRAEL OTROK (Oz 11,1-11).chordpro | KO JE BIL IZRAEL OTROK (Oz 11,1-11) | 10 roles | 22 verses | B, C, F, d, g
+SL - 108 - TO JE GOSPODOVA PASHA.chordpro | TO JE GOSPODOVA PASHA | 9 roles | 17 verses | E, G, a
+SL - 109 - VSAKA STVAR IMA SVOJ ČAS (Prid 3,1-15).chordpro | VSAKA STVAR IMA SVOJ ČAS (Prid 3,1-15) | 8 roles | 34 verses | C, E7, F, a, d, e
+SL - 110.chordpro | Untitled Song | 8 roles | 43 verses | G, a
+SL - 111 - KAKO LJUBA SO TVOJA BIVALIŠČA - Ps 83 (84).chordpro | KAKO LJUBA SO TVOJA BIVALIŠČA - Ps 83 (84) | 5 roles | 27 verses | C, F, G, a, e
+SL - 112 - GOSPOD PRIHAJA, OBLEČEN V VELIČANSTVO - Ps 92 (93).chordpro | GOSPOD PRIHAJA, OBLEČEN V VELIČANSTVO - Ps 92 (93) | 7 roles | 18 verses | d, g
+SL - 113 - DAN POČITKA IN SVETOSTI.chordpro | DAN POČITKA IN SVETOSTI | 8 roles | 14 verses | a, e
+SL - 114 - TOLAŽITE MOJE LJUDSTVO (Iz 40,1-11).chordpro | TOLAŽITE MOJE LJUDSTVO (Iz 40,1-11) | 6 roles | 19 verses | A, G, H7, a, e
+SL - 115 - ANGELA DVA STA BILA.chordpro | ANGELA DVA STA BILA | 4 roles | 14 verses | E, a, d
+SL - 116 - LJUBIM GOSPODA - Ps 114 - 115 (116).chordpro | LJUBIM GOSPODA - Ps 114 - 115 (116) | 4 roles | 29 verses | C, D, D7, G, a, h
+SL - 117 - PRIDITE K MENI VI VSI (Mt 11,28-30).chordpro | PRIDITE K MENI VI VSI (Mt 11,28-30) | 2 roles | 14 verses | C, E, F, a
+SL - 118 - TEBI, GOSPOD, GRE HVALOSPEV NA SIONU - Ps 64 (65).chordpro | TEBI, GOSPOD, GRE HVALOSPEV NA SIONU - Ps 64 (65) | 6 roles | 23 verses | A, A7, B, d, g
+SL - 119 - ČE H GOSPODU SE ZATEKAM - Ps 10 (11).chordpro | ČE H GOSPODU SE ZATEKAM - Ps 10 (11) | 3 roles | 25 verses | C, C7, G, H, H7, a, e
+SL - 120 - GOSPOD OZNANJA NOVICO - Ps 67 (68).chordpro | GOSPOD OZNANJA NOVICO - Ps 67 (68) | 5 roles | 21 verses | A, G, a, e, h
+SL - 121 - BLAGOSLAVLJAJTE GOSPODA, ALELUJA - Ps 133 (134).chordpro | BLAGOSLAVLJAJTE GOSPODA, ALELUJA - Ps 133 (134) | 2 roles | 16 verses | C, H7, e
+SL - 122 - HČERE JERUZALEMSKE (Lk 23,28.31.34.43.46).chordpro | HČERE JERUZALEMSKE (Lk 23,28.31.34.43.46) | 9 roles | 17 verses | E, F, G, a
+SL - 123 - RAZKRIL SEM TI SVOJ GREH - Ps 31 (32).chordpro | RAZKRIL SEM TI SVOJ GREH - Ps 31 (32) | 3 roles | 22 verses | G, a, d
+SL - 124 - MARIJA, MATI CERKVE (Jn 19,26-34).chordpro | MARIJA, MATI CERKVE (Jn 19,26-34) | 3 roles | 45 verses | E, F, G, a, d
+SL - 125 - STABAT MATER DOLOROSA.chordpro | STABAT MATER DOLOROSA | 7 roles | 32 verses | A7, B, B7, d
+SL - 126 - GOSPODOVA TOŽBA - O MOJE LJUDSTVO.chordpro | GOSPODOVA TOŽBA - O MOJE LJUDSTVO | 10 roles | 25 verses | H7, a, e
+SL - 127 - O GOSPOD, NAŠ BOG - Ps 8.chordpro | O GOSPOD, NAŠ BOG - Ps 8 | 2 roles | 15 verses | C, G, H7, a, e
+SL - 128.chordpro | Untitled Song | 4 roles | 13 verses | E, F, G, a, d
+SL - 129 - ZDRAVA, O NEBES KRALJICA.chordpro | ZDRAVA, O NEBES KRALJICA | 4 roles | 19 verses | E, E7, F, G, a, d
+SL - 130 - DEVICA ČUDOVITEGA.chordpro | DEVICA ČUDOVITEGA | 7 roles | 25 verses | E, F, a, d
+SL - 131 - MARIJA, HIŠA BLAGOSLOVA.chordpro | MARIJA, HIŠA BLAGOSLOVA | 5 roles | 19 verses | E, F, G, a, d
+SL - 132 - BLAGOSLAVLJAL BOM GOSPODA V VSAKEM ČASU - Ps 33 (34).chordpro | BLAGOSLAVLJAL BOM GOSPODA V VSAKEM ČASU - Ps 33 (34) | 5 roles | 21 verses | A, B, C, d
+SL - 133 - ŽETEV NARODOV (Jn 4,31-38).chordpro | ŽETEV NARODOV (Jn 4,31-38) | 6 roles | 24 verses | C, D, H7, a, e, eH7
+SL - 134 - GOSPOD GOVORI MOJEMU GOSPODU - Ps 109 (110).chordpro | GOSPOD GOVORI MOJEMU GOSPODU - Ps 109 (110) | 6 roles | 29 verses | C, E, F, G, G7, a
+SL - 135 - SREČEN ČLOVEK - Ps 1.chordpro | SREČEN ČLOVEK - Ps 1 | 9 roles | 25 verses | E, F, G, a
+SL - 136 - TI SI NAJLEPŠI - Ps 44 (45).chordpro | TI SI NAJLEPŠI - Ps 44 (45) | 8 roles | 30 verses | A, B, C, F, d, g
+SL - 137 - SREČA ČLOVEKU - Ps 127 (128).chordpro | SREČA ČLOVEKU - Ps 127 (128) | 2 roles | 13 verses | E, F, a, d
+SL - 138 - VZDIGNE SE BOG - Ps 67 (68,2.4-7).chordpro | VZDIGNE SE BOG - Ps 67 (68,2.4-7) | 1 roles | 14 verses | E
+SL - 139 - POJDIMO ZDAJ, PASTIRJI.chordpro | POJDIMO ZDAJ, PASTIRJI | 6 roles | 14 verses | H7, a, e
+SL - 140 - MARIA DI JASNA GORA.chordpro | MARIA DI JASNA GORA | 4 roles | 16 verses | A, d, g
+SL - 141 - K TEBI, GOSPOD, GLASNO KLIČEM NA POMOČ - Ps 141 (142).chordpro | K TEBI, GOSPOD, GLASNO KLIČEM NA POMOČ - Ps 141 (142) | 4 roles | 24 verses | E, E7, F, G, a, d
+SL - 142 - MLADIKA POŽENE IZ JESEJEVEGA RODU (Iz 11).chordpro | MLADIKA POŽENE IZ JESEJEVEGA RODU (Iz 11) | 6 roles | 33 verses | C, D, G, H7, a, e
+SL - 143 - K TEBI, GOSPOD, DVIGAM SVOJO DUŠO - Ps 24 (25).chordpro | K TEBI, GOSPOD, DVIGAM SVOJO DUŠO - Ps 24 (25) | 2 roles | 16 verses | E, F, a, d
+SL - 144 - KLIČEM TE, GOSPOD - Ps 140 (141).chordpro | KLIČEM TE, GOSPOD - Ps 140 (141) | 2 roles | 23 verses | C, D, G, H7, a, e
+SL - 145 - K TEBI DVIGAM SVOJE OČI - Ps 123 (122).chordpro | K TEBI DVIGAM SVOJE OČI - Ps 123 (122) | 2 roles | 25 verses | A, A7, B, d, g
+SL - 146 - GOSPOD, NE KAZNUJ ME V SVOJI JEZI - Ps 6.chordpro | GOSPOD, NE KAZNUJ ME V SVOJI JEZI - Ps 6 | 6 roles | 24 verses | A, FIS, G, e, h
+SL - 147 - SLAVA, SLAVA, SLAVA (Iz 66,18 sl).chordpro | SLAVA, SLAVA, SLAVA (Iz 66,18 sl) | 9 roles | 31 verses | A, E, FIS, GIS, H, H7, cis
+SL - 148 - RADUJTE SE, PRAVIČNI, V GOSPODU - Ps 32.chordpro | RADUJTE SE, PRAVIČNI, V GOSPODU - Ps 32 | 2 roles | 18 verses | C, D, G, H, H7, a
+SL - 149 - MNOGO SO ME PREGANJALI - Ps 128.chordpro | MNOGO SO ME PREGANJALI - Ps 128 | 3 roles | 30 verses | A7, d
+SL - 150 - VALOVI SMRTI SO ME OBDAJALI - Ps 18.chordpro | VALOVI SMRTI SO ME OBDAJALI - Ps 18 | 1 roles | 19 verses | C, E, F, G, a
+SL - 151 - MARIJA, MATI GOREČE POTI.chordpro | MARIJA, MATI GOREČE POTI | 4 roles | 17 verses | A, C, D, G, e
+SL - 152 - ŠLOM LEH MARIAM.chordpro | ŠLOM LEH MARIAM | 7 roles | 21 verses | C, H7, a, e
+SL - 153 - POJDITE IN OZNANITE MOJIM BRATOM (Mt 28,16-20).chordpro | POJDITE IN OZNANITE MOJIM BRATOM (Mt 28,16-20) | 3 roles | 31 verses | C, E, F, G, a, d
+SL - 154 - POKAZAL MI BOŠ POT ŽIVLJENJA - Ps 15 (16).chordpro | POKAZAL MI BOŠ POT ŽIVLJENJA - Ps 15 (16) | 6 roles | 23 verses | E, F, a, d
+SL - 155 - O BOG, S SVOJIM IMENOM REŠI ME - Ps 53 (54).chordpro | O BOG, S SVOJIM IMENOM REŠI ME - Ps 53 (54) | 4 roles | 20 verses | A, A7, B, B7, C, E, F7, a, d, g
+SL - 156 - GOSPOD, POSLUŠAJ MOJO MOLITEV - Ps 142 (143).chordpro | GOSPOD, POSLUŠAJ MOJO MOLITEV - Ps 142 (143) | 7 roles | 27 verses | C, D, D7, c, g
+SL - 157 - NEUMNEŽ MISLI, DA NI BOGA - Ps 13 (14).chordpro | NEUMNEŽ MISLI, DA NI BOGA - Ps 13 (14) | 5 roles | 25 verses | A, A7, B, C, F, a, d, g
+SL - 158 - NI GA TUKAJ (Mt 28,1-7).chordpro | NI GA TUKAJ (Mt 28,1-7) | 3 roles | 26 verses | C, D7, E, F, G, c, d, g
+SL - 159 - VZAMEM VAS IZMED NARODOV (Ez 36,24-28).chordpro | VZAMEM VAS IZMED NARODOV (Ez 36,24-28) | 2 roles | 11 verses | A, B, D7, d, g
+SL - 160 - VI STE LUČ SVETA (Mt 5,14-16).chordpro | VI STE LUČ SVETA (Mt 5,14-16) | 1 roles | 13 verses | A, A7, B, F, d, g
+SL - 161 - SAMA S SAMIM.chordpro | SAMA S SAMIM | 2 roles | 12 verses | A, A7, B, C, F, d, g
+SL - 162 - SEDI SAMOTEN IN MOLČI (Žal 3,1-33).chordpro | SEDI SAMOTEN IN MOLČI (Žal 3,1-33) | 2 roles | 30 verses | C, E, F, G, G7, a, d, e
+SL - 163 - TAKO GOVORI AMEN (Raz 3,14-22).chordpro | TAKO GOVORI AMEN (Raz 3,14-22) | 9 roles | 32 verses | C, D, D7, G, H7, e
+SL - 164 - ZAGLEDAJO TE KRALJI DRUGI SPEV O SLUŽABNIKU (Iz 49,1-16).chordpro | ZAGLEDAJO TE KRALJI: DRUGI SPEV O SLUŽABNIKU (Iz 49,1-16) | 9 roles | 29 verses | C, E, F, G7, a, d, e
+SL - 165 - JAKOB (1 Mz 32,33-39).chordpro | JAKOB (1 Mz 32,33-39) | 8 roles | 39 verses | C, D, E, E7, F, G, a
+SL - 166 - DEBORA (Sod 5).chordpro | DEBORA (Sod 5) | 10 roles | 34 verses | D7, E, F, a, e
+SL - 167 - VIDIM ODPRTO NEBO (Raz 19,11-20).chordpro | VIDIM ODPRTO NEBO (Raz 19,11-20) | 7 roles | 31 verses | C, E, F, G, a
+SL - 168 - GOSPOD MI JE DAL TRETJI SPEV O SLUŽABNIKU (Iz 50,4-10).chordpro | GOSPOD MI JE DAL: TRETJI SPEV O SLUŽABNIKU (Iz 50,4-10) | 10 roles | 26 verses | B, C, E, F, a, e
+SL - 169 - TLAČILEC (Iz 63,1-6).chordpro | TLAČILEC (Iz 63,1-6) | 5 roles | 27 verses | D, H7, a, e
+SL - 170 - SEJAVEC (Mk 4,3-9).chordpro | SEJAVEC (Mk 4,3-9) | 19 roles | 41 verses | A, D, G, H7, a, e
+SL - 171 - GOSPODOV DUH JE NAD MENOJ (Lk 4,18-19; Iz 61,1-3).chordpro | GOSPODOV DUH JE NAD MENOJ (Lk 4,18-19; Iz 61,1-3) | 6 roles | 16 verses | E, F, G, a
+SL - 172 - GLEJTE, NAŠE OGLEDALO JE GOSPOD (XIII. Salomonova oda).chordpro | GLEJTE, NAŠE OGLEDALO JE GOSPOD (XIII. Salomonova oda) | 6 roles | 15 verses | A7, a, d, g
+SL - 173 - KOT DA RAZVNEL BI JEZO (VII. Salomonova oda).chordpro | KOT DA RAZVNEL BI JEZO (VII. Salomonova oda) | 8 roles | 25 verses | A7, C, E, F, G, a, d
+SL - 174 - BLAGOSLOVLJEN NAJ BO BOG (Ef 1,3-13).chordpro | BLAGOSLOVLJEN NAJ BO BOG (Ef 1,3-13) | 6 roles | 32 verses | C, E, F, G, G7, a, d
+SL - 175 - GOSPOD, PREISKUJEŠ ME IN ME POZNAŠ - Ps 138 (139).chordpro | GOSPOD, PREISKUJEŠ ME IN ME POZNAŠ - Ps 138 (139) | 9 roles | 29 verses | A, B, C7, F, a, d, g
+SL - 176 - ELI, ELI, LAMA SABAKTANI - Ps 21 (22).chordpro | ELI, ELI, LAMA SABAKTANI? - Ps 21 (22) | 7 roles | 78 verses | H7, a, e, ea
+SL - 177 - NIHČE NE MORE SLUŽITI DVEMA GOSPODARJEMA (Mt 6,24-33).chordpro | NIHČE NE MORE SLUŽITI DVEMA GOSPODARJEMA (Mt 6,24-33) * | 7 roles | 34 verses | C, E, E7, F, G, a, d, e
+SL - 178 - GOSPOD, MOJE SRCE NIČ VEČ NE ZAHTEVA - Ps 130 (131).chordpro | GOSPOD, MOJE SRCE NIČ VEČ NE ZAHTEVA - Ps 130 (131) | 6 roles | 16 verses | H7, a, e
+SL - 179 - HOČEM V JERUZALEM (Sefardska pesem).chordpro | HOČEM V JERUZALEM (Sefardska pesem) | 3 roles | 17 verses | E, F, a, d
+SL - 180 - ŠEMA IZRAEL (5Mz 6,4-9).chordpro | ŠEMA IZRAEL (5Mz 6,4-9) * | 6 roles | 33 verses | E, F, G, a, d
+SL - 181 - HVALNICA SLAVNEMU KRIŽU.chordpro | HVALNICA SLAVNEMU KRIŽU | 5 roles | 24 verses | A, B, C, F, d, g
+SL - 182 - PREOBLECITE SE V BOJNO OPRAVO BOŽJO (Ef 6,11-17).chordpro | PREOBLECITE SE V BOJNO OPRAVO BOŽJO (Ef 6,11-17) | 4 roles | 24 verses | A, B, d, g
+SL - 183 - NJEGOVI TEMELJI - Ps 86 (87).chordpro | NJEGOVI TEMELJI - Ps 86 (87) | 2 roles | 22 verses | E, F, G, H7, a, d
+SL - 184 - AKEDA.chordpro | AKEDA | 6 roles | 21 verses | E, a, d
+SL - 185 - NE RAZBURJAJ SE - Ps 36 (37).chordpro | NE RAZBURJAJ SE - Ps 36 (37) | 9 roles | 27 verses | E7, F, a, d
+SL - 186 - HVALNICA LJUBEZNI (1 Kor 13,1-13).chordpro | HVALNICA LJUBEZNI (1 Kor 13,1-13) * | 2 roles | 31 verses | C, F, G, a
+SL - 187 - SAM BOG (2 Kor 4,6-12).chordpro | SAM BOG (2 Kor 4,6-12) | 8 roles | 30 verses | C, E, F, G, a
+SL - 188 - KOT OBSOJENI NA SMRT (1 Kor 4,9-13).chordpro | KOT OBSOJENI NA SMRT (1 Kor 4,9-13) | 10 roles | 34 verses | E, F, G, a
+SL - 189 - JEZUS JE OBHODIL VSA MESTA (Mt 9,35 sl; 10).chordpro | JEZUS JE OBHODIL VSA MESTA (Mt 9,35 sl; 10) | 20 roles | 45 verses | C, E, E7, F, G, a, d, e
+SL - 190 - NE UPIRAJTE SE HUDEMU (Mt 5, 38 sl).chordpro | NE UPIRAJTE SE HUDEMU (Mt 5, 38 sl) | 8 roles | 32 verses | A, A7, D, G, h
+SL - 191 - O, DA BI MI DAL POLJUB (Vp 1,2 sl).chordpro | O, DA BI MI DAL POLJUB (Vp 1,2 sl) | 4 roles | 26 verses | A, A7, B, d
+SL - 192 - MOJA LJUBA JE MENI (Vp 1,13 sl).chordpro | MOJA LJUBA JE MENI (Vp 1,13 sl) | 9 roles | 37 verses | E, F, G, a, d
+SL - 193 - PRIDI Z LIBANONA (Vp 4,8 sl).chordpro | PRIDI Z LIBANONA (Vp 4,8 sl) | 4 roles | 43 verses | A, C, D, G, a, e
+SL - 194 - KO SEM SPALA (Vp 5,2 sl).chordpro | KO SEM SPALA (Vp 5,2 sl) | 6 roles | 29 verses | C, E, E7, F, G, a, d
+SL - 195 - TI, KI PREBIVAŠ NA VRTOVIH (Vp 8, 13-14).chordpro | TI, KI PREBIVAŠ NA VRTOVIH (Vp 8, 13-14) | 4 roles | 24 verses | A, E, F, a, d, fis
+SL - 196 - JAGNJICA BOŽJA (Mt 1,18 sl).chordpro | JAGNJICA BOŽJA (Mt 1,18 sl) | 10 roles | 35 verses | C, H7, a, e
+SL - 197 - NI NA NJEM LEPOTE ČETRTI SPEV O SLUŽABNIKU (Iz 53).chordpro | NI NA NJEM LEPOTE: ČETRTI SPEV O SLUŽABNIKU (Iz 53) | 6 roles | 25 verses | C, F, G, G7, a
+SL - 198 - PESEM O JAGNJETU (Raz 5,9 sl).chordpro | PESEM O JAGNJETU (Raz 5,9 sl) | 4 roles | 22 verses | A7, F, a, d, g
+SL - 199 - KDO JE TA (Vp 8,5-7).chordpro | KDO JE TA? (Vp 8,5-7) | 2 roles | 23 verses | E, F, G, a
+SL - 200 - GLAS MOJEGA LJUBEGA (Vp 2,8-17).chordpro | GLAS MOJEGA LJUBEGA (Vp 2,8-17) | 7 roles | 34 verses | C, E, F, FF, G, a, d
+SL - 201 - GOLOBICA JE PRILETELA (XXIV. Salomonova oda).chordpro | GOLOBICA JE PRILETELA (XXIV. Salomonova oda) | 5 roles | 23 verses | C, H7, a, e
+SL - 202 - KAKOR SE MED CEDI (XI. Salomonova oda).chordpro | KAKOR SE MED CEDI (XI. Salomonova oda) | 9 roles | 28 verses | E, F, a, d
+SL - 203 - O JEZUS, LJUBEZEN MOJA.chordpro | O JEZUS, LJUBEZEN MOJA | 18 roles | 35 verses | E, F, G, a
+SL - 204 - VODI ME V NEBO.chordpro | VODI ME V NEBO | 6 roles | 15 verses | C, E, F, G7, a
+SL - 205 - TI SI MOJE UPANJE, GOSPOD (XXIX Salomonova oda).chordpro | TI SI MOJE UPANJE, GOSPOD (XXIX Salomonova oda) | 4 roles | 20 verses | A, A7, B7, d, g
+SL - 206 - ŽENA, OGRNJENA S SONCEM (Raz 12).chordpro | ŽENA, OGRNJENA S SONCEM (Raz 12) | 7 roles | 40 verses | E, F, G, a
+SL - 207 - RAZPEL SEM SVOJE ROKE.chordpro | RAZPEL SEM SVOJE ROKE | 5 roles | 16 verses | C, D, E, F, G, G7, a
+SL - 208 - VELIKONOČNA HOMILIJA MELITONA IZ SARDE.chordpro | VELIKONOČNA HOMILIJA MELITONA IZ SARDE | 7 roles | 31 verses | A7, B, d
+SL - 209 - CARMEN 1963 (Tagore).chordpro | CARMEN 1963 (Tagore) | 2 roles | 24 verses | A, D, E, F, FIS, G, H, a, d, e, h
+SL - 210 - CARITAS CHRISTI (2 Kor 5,4-21; 1 Kor 9,16b).chordpro | CARITAS CHRISTI * (2 Kor 5,4-21; 1 Kor 9,16b) | 7 roles | 31 verses | A7, C, E, F, G, a, d
+SL - 211 - NOLI ME TANGERE (Jn 20,15-17).chordpro | NOLI ME TANGERE (Jn 20,15-17) | 11 roles | 29 verses | A, C, D, E, H, H7, a, e
+SL - 212 - GOSPOD, POMAGAJ MI, GOSPOD.chordpro | GOSPOD, POMAGAJ MI, GOSPOD | 10 roles | 27 verses | C, E, F, G, G7, a, d
+SL - 213 - ZAPELJAL SI ME, GOSPOD (Jer 20,7-18).chordpro | ZAPELJAL SI ME, GOSPOD (Jer 20,7-18) * | 6 roles | 30 verses | C, E, F, G, a
+SL - 214 - NEKOČ V TEMNI NOČI (Sv. Janez od Križa).chordpro | NEKOČ V TEMNI NOČI (Sv. Janez od Križa) | 3 roles | 30 verses | E, F, a, d
+SL - 215 - LJUBITE SVOJE SOVRAŽNIKE (Blagri Lk 6,20 sl).chordpro | LJUBITE SVOJE SOVRAŽNIKE (Blagri: Lk 6,20 sl) | 1 roles | 36 verses | A, CIS, D, E, FIS, G, H, h
+SL - 216 - LEPA SI, PRIJATELJICA MOJA (Vp 6-7).chordpro | LEPA SI, PRIJATELJICA MOJA (Vp 6-7) | 3 roles | 27 verses | A, A7, B, D7, d, g
+SL - 217 - BRATJE, NE DAJMO NIKOMUR VZROKA ZA POHUJŠANJE (2 Kor 6,3-16).chordpro | BRATJE, NE DAJMO NIKOMUR VZROKA ZA POHUJŠANJE (2 Kor 6,3-16) | 5 roles | 30 verses | A7, E, F, G, a, d, da
+SL - 218 - TO JE MOJA ZAPOVED (Prim. Jn 15,12.13.16.18; 17,21).chordpro | TO JE MOJA ZAPOVED (Prim. Jn 15,12.13.16.18; 17,21) | 3 roles | 27 verses | A7, C, E, F, G, a, d
+SL - 219 - SREDI VELIKE MNOŽICE.chordpro | SREDI VELIKE MNOŽICE | 2 roles | 26 verses | E, F, G, a
+SL - 220 - ZAHEJ.chordpro | ZAHEJ | 5 roles | 35 verses | E, F, G, a, d
+SL - 221 - ZDRAVA, MARIJA, GOLOBICA BREZMADEŽNA.chordpro | ZDRAVA, MARIJA, GOLOBICA BREZMADEŽNA | 6 roles | 22 verses | E, F, a, d
+SL - 222 - RESURREXIT.chordpro | RESURREXIT | 5 roles | 25 verses | E, E7, F, a, d
+SL - 223 - MESIJA, LEV ZA ZMAGOVANJE (2014).chordpro | MESIJA, LEV ZA ZMAGOVANJE (2014) | 4 roles | 15 verses | C, G, H7, a, e
+SL - 224 - KAKOR OVCA (iz speva Romana Melodijskega).chordpro | KAKOR OVCA (iz speva Romana Melodijskega) | 10 roles | 28 verses | C, H7, a, e
+SL - 225 - HVALNICA KRISTUSU – LUČI (1967).chordpro | HVALNICA KRISTUSU – LUČI (1967) | 0 roles | 0 verses | none
+SL - 226 - VESELITE SE, GOSPOD JE BLIZU (Fil 4,4sl).chordpro | VESELITE SE, GOSPOD JE BLIZU (Fil 4,4sl) | 2 roles | 7 verses | E, E7, H7, a, e
+SL - 227 - OČE NAŠ NEBEŠKI.chordpro | OČE NAŠ NEBEŠKI | 6 roles | 12 verses | C, F, d, g
+SL - 228 - ESPADA (MEČ) Ez 21,14-22.chordpro | ESPADA (MEČ) Ez 21,14-22 | 9 roles | 24 verses | C, E7, F, a, d
+SL - 229 - UKRADLA SI MI SRCE (Vp 4,9-5,1).chordpro | UKRADLA SI MI SRCE (Vp 4,9-5,1) | 2 roles | 31 verses | A7, B, C, F, d, g
+SL - 230 - ČE STE VSTALI S KRISTUSOM (Kol 3,1–4).chordpro | ČE STE VSTALI S KRISTUSOM (Kol 3,1–4) | 4 roles | 10 verses | C, H7, a, e
+SL - 231 - HVALOSPEV SVETEMU DUHU (Kiko Argüello 2018).chordpro | HVALOSPEV SVETEMU DUHU (Kiko Argüello 2018) | 7 roles | 24 verses | E, E7, F, a, d
+SL - 232 - POVZPNE NAJ SE ŽENIN.chordpro | POVZPNE NAJ SE ŽENIN | 4 roles | 20 verses | E, F, a, d

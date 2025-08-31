@@ -223,7 +223,13 @@ class ChordProExporter:
         """Format a chord according to the configured style"""
         if not chord:
             return ""
-        
+
+        # Check if chord is already formatted (e.g., from language customizations)
+        if ((chord.startswith('[') and chord.endswith(']')) or
+            (chord.startswith('(') and chord.endswith(')')) or
+            (chord.startswith('{') and chord.endswith('}'))):
+            return chord  # Already formatted
+
         # Apply chord bracket style
         if self.chord_bracket_style == 'square':
             return f"[{chord}]"

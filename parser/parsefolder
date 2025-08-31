@@ -28,6 +28,7 @@ try:
     from languages.slovenian.config import SlovenianConfig
     from languages.croatian.config import CroatianConfig
     from languages.spanish.config import SpanishConfig
+    from languages.italian.config import ItalianConfig
 except ImportError as e:
     print(f"❌ Import error: {e}")
     print("Make sure you're running this from the correct directory")
@@ -62,9 +63,10 @@ def get_language_config(language_code: str):
         'croatian': CroatianConfig,
         'es': SpanishConfig,
         'spanish': SpanishConfig,
+        'it': ItalianConfig,
+        'italian': ItalianConfig,
         # Add more languages as they're implemented
         # 'de': GermanConfig,
-        # 'it': ItalianConfig,
     }
     
     config_class = language_map.get(language_code.lower())
@@ -208,7 +210,7 @@ def _insert_processing_summary_to_log(log_file: Path, processed: int, skipped: i
         f.writelines(new_lines)
 
 
-def process_language_folder(language_code: str, verbose: bool = False, force: bool = False, debug: bool = False) -> int:
+def process_language_folder(language_code: str, verbose: bool = False, force: bool = False, debug: bool = False, limit: Optional[int] = None) -> int:
     """Process all PDFs in a language folder"""
     try:
         # Get language configuration
@@ -220,12 +222,18 @@ def process_language_folder(language_code: str, verbose: bool = False, force: bo
         
         # Find PDF files
         pdf_files = find_pdf_files(pdf_dir, language_code)
-        
+
         if not pdf_files:
             print(f"❌ No PDF files found in {pdf_dir}")
             return 1
-        
-        print(f"🎵 Processing {len(pdf_files)} PDF files for language '{language_code.upper()}'")
+
+        # Apply limit if specified
+        if limit is not None and limit > 0:
+            pdf_files = pdf_files[:limit]
+            print(f"🎵 Processing first {len(pdf_files)} PDF files for language '{language_code.upper()}' (limited from {len(find_pdf_files(pdf_dir, language_code))} total)")
+        else:
+            print(f"🎵 Processing {len(pdf_files)} PDF files for language '{language_code.upper()}'")
+
         print(f"📁 Input:  {pdf_dir}")
         print(f"📁 Output: {chordpro_dir}")
         print()
@@ -350,6 +358,8 @@ Folder Structure:
                        help="Language code (sl, hr, de, it, es, etc.)")
     
     # Optional arguments
+    parser.add_argument("--limit", "-l", type=int, default=None,
+                       help="Limit number of files to process (e.g., --limit 20)")
     parser.add_argument("--verbose", "-v", action="store_true",
                        help="Enable verbose output")
     parser.add_argument("--force", "-f", action="store_true",
@@ -363,7 +373,7 @@ Folder Structure:
     setup_logging(args.verbose, args.debug)
 
     # Process the language folder
-    return process_language_folder(args.language, args.verbose, args.force, args.debug)
+    return process_language_folder(args.language, args.verbose, args.force, args.debug, args.limit)
 
 
 if __name__ == "__main__":
