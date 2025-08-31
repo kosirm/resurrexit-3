@@ -54,6 +54,9 @@ class ImprovedUniversalParser:
             elif self.config.language_code == "es":
                 from languages.spanish.customizations import SpanishCustomizations
                 return SpanishCustomizations()
+            elif self.config.language_code == "it":
+                from languages.italian.customizations import ItalianCustomizations
+                return ItalianCustomizations()
             else:
                 return None
         except ImportError:
@@ -130,7 +133,12 @@ class ImprovedUniversalParser:
     def _extract_title_from_classified_lines(self, title_lines: List[Dict], song_name: str) -> str:
         """Extract title from classified title lines"""
         if not title_lines:
+            print(f"🚨 DEBUG: No title lines found for {song_name}")
             return song_name or "Untitled Song"
+
+        print(f"🚨 DEBUG: Found {len(title_lines)} title lines for {song_name}")
+        for i, title_line in enumerate(title_lines):
+            print(f"  Title line {i}: '{title_line['text'][:50]}...' at Y={title_line['y']:.1f}")
 
         # Sort by Y coordinate (top to bottom) and take the first (topmost) title
         title_lines_sorted = sorted(title_lines, key=lambda x: x['y'])

@@ -26,6 +26,7 @@ try:
     from languages.slovenian.config import SlovenianConfig
     from languages.croatian.config import CroatianConfig
     from languages.spanish.config import SpanishConfig
+    from languages.italian.config import ItalianConfig
 except ImportError as e:
     print(f"❌ Import error: {e}")
     print("Make sure you're running this from the correct directory")
@@ -60,9 +61,10 @@ def get_language_config(language_code: str):
         'croatian': CroatianConfig,
         'es': SpanishConfig,
         'spanish': SpanishConfig,
+        'it': ItalianConfig,
+        'italian': ItalianConfig,
         # Add more languages as they're implemented
         # 'de': GermanConfig,
-        # 'it': ItalianConfig,
     }
     
     config_class = language_map.get(language_code.lower())
@@ -116,7 +118,7 @@ def extract_chords_from_song(song) -> list:
     return sorted(list(chords))
 
 
-def log_single_file_parse(chordpro_dir: Path, language_code: str, filename: str, title: str, verses: int, chords: str) -> None:
+def log_single_file_parse(chordpro_dir: Path, language_code: str, filename: str, title: str, verses: str, chords: str) -> None:
     """Log single file parsing to timestamped summary log"""
     from datetime import datetime
 
@@ -130,11 +132,11 @@ def log_single_file_parse(chordpro_dir: Path, language_code: str, filename: str,
             f.write(f"# {language_code.upper()} Single File Parsing Log\n")
             f.write(f"# Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
             f.write(f"# Timestamp: {timestamp}\n")
-            f.write("# Format: FILENAME | TITLE | VERSES | CHORDS\n")
+            f.write("# Format: FILENAME | TITLE | ROLES | VERSES | CHORDS\n")
             f.write("-" * 80 + "\n")
 
         # Add the parsing entry
-        f.write(f"{filename} | {title} | {verses} verses | {chords}\n")
+        f.write(f"{filename} | {title} | {verses} | {chords}\n")
 
 
 def process_single_file(language_code: str, file_number: str, verbose: bool = False, force: bool = False, debug: bool = False) -> int:
@@ -196,12 +198,16 @@ def process_single_file(language_code: str, file_number: str, verbose: bool = Fa
             chords_used = extract_chords_from_song(song)
             chords_str = ', '.join(chords_used) if chords_used else 'none'
 
+            # Calculate roles and verses counts (match parsefolder format)
+            roles_count = len(song.verses)  # Number of role markers (C., A., etc.)
+            verses_count = sum(len(verse.lines) for verse in song.verses)  # Total verse lines
+
             # Log to timestamped summary file
-            log_single_file_parse(chordpro_dir, language_code, chordpro_file.name, song.title, len(song.verses), chords_str)
+            log_single_file_parse(chordpro_dir, language_code, chordpro_file.name, song.title, f"{roles_count} roles | {verses_count} verses", chords_str)
 
             print(f"✅ Saved: {chordpro_file.name}")
             print(f"📊 Title: {song.title}")
-            print(f"📊 Verses: {len(song.verses)}")
+            print(f"📊 Verses: {roles_count} roles | {verses_count} verses")
             print(f"📊 Chords: {chords_str}")
 
             if verbose:

@@ -59,7 +59,11 @@ class VerseLine:
                 if lyric_pos < len(self.text):
                     result += self.text[lyric_pos:]
                     lyric_pos = len(self.text)
-                result += f"[{chord.chord}]"
+                # Check if chord is already bracketed (e.g., from language customizations)
+                if chord.chord.startswith('[') and chord.chord.endswith(']'):
+                    result += chord.chord  # Already bracketed
+                else:
+                    result += f"[{chord.chord}]"  # Add brackets
             else:
                 # Normal chord positioning within text
                 target_lyric_pos = chord_pos
@@ -69,8 +73,11 @@ class VerseLine:
                     result += self.text[lyric_pos:target_lyric_pos]
                     lyric_pos = target_lyric_pos
                 
-                # Add chord
-                result += f"[{chord.chord}]"
+                # Add chord (check if already bracketed)
+                if chord.chord.startswith('[') and chord.chord.endswith(']'):
+                    result += chord.chord  # Already bracketed
+                else:
+                    result += f"[{chord.chord}]"  # Add brackets
         
         # Add any remaining text
         if lyric_pos < len(self.text):

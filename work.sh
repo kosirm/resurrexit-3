@@ -794,27 +794,41 @@ case "$1" in
 
 "parsefolder")
     if [ -z "$2" ]; then
-        echo "Usage: w parsefolder <language> [--force] [--verbose] [--debug]"
+        echo "Usage: w parsefolder <language> [limit] [--force] [--verbose] [--debug]"
         echo "Example: w parsefolder sl"
-        echo "Example: w parsefolder hr"
+        echo "Example: w parsefolder hr 20"
         echo "Example: w parsefolder sl --force --verbose"
+        echo "Example: w parsefolder es 10 --force"
         exit 1
     fi
 
     # Change to git root directory
     cd "$(dirname "$0")"
 
-    # Build command with all arguments
-    cmd="python parser/parsefolder $2"
+    # Check if third argument is a number (file limit)
+    language="$2"
+    limit=""
+    shift 2
+
+    if [ $# -gt 0 ] && [[ "$1" =~ ^[0-9]+$ ]]; then
+        limit="--limit $1"
+        shift
+    fi
+
+    # Build command with language and limit
+    cmd="python parser/parsefolder $language $limit"
 
     # Add any additional flags
-    shift 2
     while [ $# -gt 0 ]; do
         cmd="$cmd $1"
         shift
     done
 
-    echo "🎵 Parsing entire language folder using improved universal parser..."
+    if [ -n "$limit" ]; then
+        echo "🎵 Parsing first $(echo $limit | cut -d' ' -f2) files from $language folder using improved universal parser..."
+    else
+        echo "🎵 Parsing entire $language folder using improved universal parser..."
+    fi
     eval $cmd
     ;;
 
@@ -1184,7 +1198,7 @@ case "$1" in
     echo ""
     echo "Songbook Processing Commands:"
     echo "  parsefile <lang> <num> [flags]           - Parse single PDF file (e.g., w parsefile sl 001)"
-    echo "  parsefolder <lang> [flags]               - Parse entire language folder (e.g., w parsefolder hr)"
+    echo "  parsefolder <lang> [limit] [flags]       - Parse language folder (e.g., w parsefolder hr 20)"
     echo "  cleanup-logs [lang] [flags]              - Manage parsing log files (e.g., w cleanup-logs --list)"
     echo "  htmlfile <pdf> [folder] [parser] [html]  - Convert single PDF to HTML format"
     echo "  htmlfolder <folder> [out] [html]         - Convert ChordPro folder to HTML format"
@@ -1229,7 +1243,8 @@ case "$1" in
     echo "  w parsefile sl 001                      - Parse Slovenian file SL - 001.pdf"
     echo "  w parsefile hr 042 --force              - Parse Croatian file HR - 042.pdf (overwrite existing)"
     echo "  w parsefolder sl                         - Parse all Slovenian PDFs in lang/sl/03_pdf/"
-    echo "  w parsefolder hr --verbose               - Parse all Croatian PDFs with detailed output"
+    echo "  w parsefolder hr 20                     - Parse first 20 Croatian PDFs"
+    echo "  w parsefolder es 10 --force             - Parse first 10 Spanish PDFs (overwrite existing)"
     echo "  w cleanup-logs --list                    - List all parsing log files"
     echo "  w cleanup-logs sl --days 3               - Delete Slovenian logs older than 3 days"
     echo "  w htmlfile \"source/2-03-blag.pdf\"       - Convert single PDF to HTML (default generators)"
