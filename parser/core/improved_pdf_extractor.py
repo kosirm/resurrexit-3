@@ -69,12 +69,16 @@ class ImprovedPDFExtractor:
             raise FileNotFoundError(f"PDF file not found: {pdf_path}")
 
         doc = fitz.open(pdf_path)
-        
+
         chord_lines = []
         text_lines = []
         title_lines = []
         kapodaster_lines = []
         comment_lines = []
+
+        # State tracking for subtitle detection optimization
+        subtitle_detection_active = False  # Will be activated after finding title
+        found_first_role = False  # Will deactivate subtitle detection
         
         self.logger.debug(f"Processing {len(doc)} page(s)")
         
@@ -123,12 +127,17 @@ class ImprovedPDFExtractor:
                         page_height = page.rect.height
                         adjusted_y = line['bbox'][1] + (page_num * page_height)
                         
+                        # Calculate proper span boundaries for multi-span lines
+                        all_spans = line['spans']
+                        min_x = min(span['bbox'][0] for span in all_spans)
+                        max_x = max(span['bbox'][2] for span in all_spans)
+
                         line_data = {
                             'text': line_text,
                             'text_content': line_text.strip(),
-                            'x_start': main_span['bbox'][0],
-                            'x_end': main_span['bbox'][2],
-                            'width': main_span['bbox'][2] - main_span['bbox'][0],
+                            'x_start': min_x,  # Use leftmost span start
+                            'x_end': max_x,    # Use rightmost span end
+                            'width': max_x - min_x,  # Calculate full width across all spans
                             'y': adjusted_y,  # Use adjusted Y coordinate
                             'original_y': line['bbox'][1],  # Keep original for reference
                             'page_num': page_num,
@@ -151,9 +160,22 @@ class ImprovedPDFExtractor:
                         
                         elif self._is_title_line(line_text, font_size, is_pink, color):
                             title_lines.append(line_data)
+                            subtitle_detection_active = True  # Activate subtitle detection after finding title
                             self.logger.debug(f"📋 Title line (page {page_num + 1}): '{line_text.strip()}' (pink: {is_pink}, size: {font_size:.1f})")
                             if "SL - 110.pdf" in pdf_path or "SL - 128.pdf" in pdf_path:
                                 print(f"🎯 FOUND TITLE in {pdf_path}: '{line_text.strip()[:50]}...' (size: {font_size:.1f}, pink: {is_pink})")
+
+                        elif subtitle_detection_active and not found_first_role and self._is_subtitle_line(line_text, font_size, color, page_num):
+                            # Mark as subtitle for later processing
+                            line_data['is_subtitle'] = True
+                            text_lines.append(line_data)
+                            self.logger.debug(f"📄 Subtitle line (page {page_num + 1}): '{line_text.strip()}' (size: {font_size:.1f})")
+
+                        elif self._is_capo_line(line_text, font_size, color, page_num):
+                            # Mark as capo for later processing
+                            line_data['is_capo'] = True
+                            text_lines.append(line_data)
+                            self.logger.debug(f"🎸 Capo line (page {page_num + 1}): '{line_text.strip()}' (size: {font_size:.1f})")
 
                         
                         elif self._is_kapodaster_line(line_text, is_pink):
@@ -168,7 +190,11 @@ class ImprovedPDFExtractor:
                         elif (self.config.language_code == "it" and
                               hasattr(self.config, 'is_role_line') and
                               self.config.is_role_line(line_text, font_size, is_bold, color)):
-                            # Italian role line detected
+                            # Italian role line detected - deactivate subtitle detection
+                            if not found_first_role:
+                                found_first_role = True
+                                subtitle_detection_active = False
+                                self.logger.debug(f"🎭 First role detected - subtitle detection deactivated")
                             line_data['is_role'] = True
                             text_lines.append(line_data)
                             self.logger.debug(f"🎭 Role line (page {page_num + 1}): '{line_text.strip()}' (size: {font_size:.1f})")
@@ -179,6 +205,12 @@ class ImprovedPDFExtractor:
                             has_role_marker = any(role in line_text for role in self.config.role_markers)
 
                             if has_role_marker:
+                                # First role marker detected - deactivate subtitle detection
+                                if not found_first_role:
+                                    found_first_role = True
+                                    subtitle_detection_active = False
+                                    self.logger.debug(f"🎭 First role detected - subtitle detection deactivated")
+
                                 # Extract text content after role marker
                                 for role in sorted(self.config.role_markers, key=len, reverse=True):
                                     if line_text.strip().startswith(role):
@@ -313,27 +345,72 @@ class ImprovedPDFExtractor:
                 if self._looks_like_italian_chord(inner_text.split()[0]):
                     return True
 
-            # Handle spaced chord extensions (e.g., "La m", "Re m 9")
+            # Handle spaced chord extensions (e.g., "La m", "Re m 9", "Fa maj 7")
             if len(words) >= 2:
                 base_chord = words[0]
                 # Check if first word is Italian chord and second is extension
-                if (self._looks_like_italian_chord(base_chord) and
-                    (words[1] in ['m'] or words[1].isdigit() or words[1] in ['6', '7', '9', 'maj7', 'dim', 'aug'])):
-                    return True
+                if self._looks_like_italian_chord(base_chord):
+                    # Check for basic extensions
+                    if words[1] in ['m', 'b', 'dim', 'aug', 'sus4', 'sus2', '+', '°']:
+                        return True
+                    # Check for numbers
+                    elif words[1].isdigit() or words[1] in ['6', '7', '9', '11', '13']:
+                        return True
+                    # Check for complex extensions like "maj", "min", "add"
+                    elif words[1] in ['maj', 'min', 'add']:
+                        return True
+                    # Check for merged extensions like "maj7"
+                    elif words[1] in ['maj7', 'dim7', 'aug7']:
+                        return True
+
+            # Handle three-word chord extensions (e.g., "Fa maj 7", "Re m 9")
+            if len(words) >= 3:
+                base_chord = words[0]
+                if self._looks_like_italian_chord(base_chord):
+                    # Check for patterns like "Fa maj 7", "Re m 9"
+                    if ((words[1] in ['maj', 'min', 'dim', 'aug', 'm'] and
+                         (words[2].isdigit() or words[2] in ['6', '7', '9', '11', '13'])) or
+                        # Check for patterns like "Do add 9"
+                        (words[1] == 'add' and words[2].isdigit())):
+                        return True
 
             # Handle single Italian chords
             if len(words) == 1 and self._looks_like_italian_chord(words[0]):
                 return True
 
-            # Handle multiple Italian chords
-            italian_chord_count = 0
-            for word in words:
-                if self._looks_like_italian_chord(word):
-                    italian_chord_count += 1
+            # Handle multiple Italian chords using chord unit parsing
+            # Use the same logic as chord sequence detection to properly parse chord units
+            chord_units = []
+            i = 0
+            while i < len(words):
+                if i < len(words) - 1:
+                    # Check for two-word chord units like "La m", "Mi 7"
+                    two_word_unit = f"{words[i]} {words[i + 1]}"
+                    if self._looks_like_italian_chord_unit(two_word_unit):
+                        chord_units.append(two_word_unit)
+                        i += 2  # Skip both words
+                        continue
 
-            # If most words look like Italian chords, it's a chord line
-            if len(words) > 0 and (italian_chord_count / len(words)) > 0.7:
-                return True
+                if i < len(words) - 2:
+                    # Check for three-word chord units like "Fa maj 7"
+                    three_word_unit = f"{words[i]} {words[i + 1]} {words[i + 2]}"
+                    if self._looks_like_italian_chord_unit(three_word_unit):
+                        chord_units.append(three_word_unit)
+                        i += 3  # Skip all three words
+                        continue
+
+                # Check for single-word chord
+                if self._looks_like_italian_chord(words[i]):
+                    chord_units.append(words[i])
+
+                i += 1
+
+            # If most units are chord units, it's a chord line
+            if len(words) > 0 and len(chord_units) > 0:
+                chord_ratio = len(chord_units) / len(words)
+                # Use a lower threshold since we're counting chord units properly
+                if chord_ratio > 0.5:
+                    return True
 
         # Original logic for Croatian/Slovenian (content-based)
         # Special case: single spaced chord like "H 7" should be recognized as chord line
@@ -413,13 +490,23 @@ class ImprovedPDFExtractor:
 
         # Italian-specific title detection
         if self.config.language_code == "it":
-            # Italian titles: red color (14355506), size ~14.9, uppercase
-            is_red = abs(color - 14355506) < 100000  # Italian red color
+            # Italian titles: red-ish color, size ~14.9, uppercase
+            # Allow more flexibility in color detection (different shades of red/brown)
+            is_red = (abs(color - 14355506) < 1000000 or  # Original red
+                     abs(color - 13768500) < 500000)      # Brown-ish red variant
             is_large = abs(font_size - 14.9) < 2.0   # Italian title size
             is_uppercase = text_clean.isupper()
-            is_reasonable_length = len(text_clean) > 5
+            is_reasonable_length = len(text_clean) >= 5  # Allow titles with 5+ characters
 
-            return is_red and is_large and is_uppercase and is_reasonable_length
+            # Debug Italian title detection
+            self.logger.debug(f"🔍 Italian title check: '{text_clean[:30]}...' | "
+                            f"font_size: {font_size:.1f} (req: ~14.9) | "
+                            f"color: {color} (req: 14355506 or 13768500) | is_red: {is_red} | "
+                            f"is_uppercase: {is_uppercase} | len: {len(text_clean)}")
+
+            result = is_red and is_large and is_uppercase and is_reasonable_length
+            self.logger.debug(f"🔍 Italian title result: {result} for '{text_clean[:30]}...'")
+            return result
 
         # Enhanced title detection for other languages
         import re
@@ -455,7 +542,7 @@ class ImprovedPDFExtractor:
         font_size_requirement = 12.0  # Default font size
 
         if self.config.language_code == "hr":
-            color_requirement = is_pink  # Croatian requires pink
+            color_requirement = True  # Croatian doesn't require specific color (relaxed from is_pink)
             font_size_requirement = 12.0
         elif self.config.language_code == "sl":
             color_requirement = True  # Slovenian doesn't require pink
@@ -472,6 +559,19 @@ class ImprovedPDFExtractor:
                             f"is_red: {is_red} | is_pink: {is_pink} | uppercase: {is_mostly_uppercase} | "
                             f"len: {len(text_clean)}")
 
+        # Debug Croatian title detection
+        if self.config.language_code == "hr":
+            role_check = any(role in text_clean for role in self.config.role_markers)
+            chord_check = self._is_chord_line_text(text_clean)
+            self.logger.debug(f"🔍 Croatian title check: '{text_clean[:50]}...' | "
+                            f"font_size: {font_size:.1f} (req: {font_size_requirement}) | "
+                            f"uppercase: {is_mostly_uppercase} | len: {len(text_clean)} | "
+                            f"color_req: {color_requirement} | role_check: {role_check} | chord_check: {chord_check}")
+            self.logger.debug(f"🔍 Text preprocessing: original='{text_clean}' -> after_regex='{text_for_case_check}'")
+            if role_check:
+                matching_roles = [role for role in self.config.role_markers if role in text_clean]
+                self.logger.debug(f"🔍 Matching roles found: {matching_roles}")
+
         is_title = (is_mostly_uppercase and
                    len(text_clean) > 4 and
                    font_size >= font_size_requirement and
@@ -486,7 +586,84 @@ class ImprovedPDFExtractor:
             self.logger.debug(f"🔍 Spanish title result: {is_title} for '{text_clean[:30]}...'")
 
         return is_title
-    
+
+    def _is_subtitle_line(self, text: str, font_size: float, color: int, page_num: int) -> bool:
+        """Check if a line is a subtitle (usually biblical references)"""
+        text_clean = text.strip()
+
+        if not text_clean or len(text_clean) < 3:
+            return False
+
+        # Italian-specific subtitle detection
+        if self.config.language_code == "it":
+            # Italian subtitles: size ~9.8, usually biblical references or notes
+            is_subtitle_size = abs(font_size - 9.8) < 1.0   # Subtitle size
+            is_reasonable_length = 3 <= len(text_clean) <= 100
+
+            # Check if this looks like a chord sequence first
+            is_chord_sequence = self._looks_like_italian_chord_sequence(text_clean)
+
+            # Debug chord sequence detection
+            self.logger.debug(f"🎸 Chord sequence check: '{text_clean}' -> is_chord_sequence: {is_chord_sequence}")
+
+            # Common Italian subtitle patterns (only if not a chord sequence)
+            is_biblical_ref = False
+            if not is_chord_sequence:
+                is_biblical_ref = any(pattern in text_clean.lower() for pattern in [
+                    'cfr.', 'gen ', 'mt ', 'mc ', 'lc ', 'gv ', 'at ', 'rm ', 'cor ', 'gal ', 'ef ', 'fil ', 'col ',
+                    'ts ', 'tm ', 'tt ', 'fm ', 'eb ', 'gc ', 'pt ', 'gv ', 'ap ', 'sal ', 'is ', 'ger ', 'ez ',
+                    'dn ', 'os ', 'gl ', 'am ', 'ab ', 'gn ', 'mi ', 'na ', 'ab ', 'so ', 'ag ', 'zc ', 'ml ',
+                    'tempo di', 'quaresima', 'avvento', 'pasqua', 'natale', 'ordinario'
+                ])
+
+            # Debug Italian subtitle detection
+            self.logger.debug(f"🔍 Italian subtitle check: '{text_clean[:30]}...' | "
+                            f"font_size: {font_size:.1f} (req: ~9.8) | "
+                            f"is_subtitle_size: {is_subtitle_size} | "
+                            f"is_biblical_ref: {is_biblical_ref} | len: {len(text_clean)}")
+
+            result = is_subtitle_size and is_reasonable_length and is_biblical_ref
+            self.logger.debug(f"🔍 Italian subtitle result: {result} for '{text_clean[:30]}...'")
+            return result
+
+        return False
+
+    def _is_capo_line(self, text: str, font_size: float, color: int, page_num: int) -> bool:
+        """Check if a line is a capo instruction"""
+        text_clean = text.strip()
+
+        if not text_clean or len(text_clean) < 3:
+            return False
+
+        # Italian-specific capo detection
+        if self.config.language_code == "it":
+            text_lower = text_clean.lower()
+
+            # Italian capo patterns: "Barrè al III tasto", "Barrè al II tasto", etc.
+            italian_capo_patterns = [
+                'barrè al', 'barre al', 'capotasto al', 'capo al'
+            ]
+
+            # Check if text contains any Italian capo patterns
+            is_capo_instruction = any(pattern in text_lower for pattern in italian_capo_patterns)
+
+            # Check for Roman numerals or numbers
+            import re
+            has_fret_number = bool(re.search(r'\b(i{1,3}|iv|v|vi{0,3}|ix|x|\d+)\s*(tasto|fret)\b', text_lower))
+
+            # Debug Italian capo detection
+            self.logger.debug(f"🔍 Italian capo check: '{text_clean[:30]}...' | "
+                            f"is_capo: {is_capo_instruction} | has_fret: {has_fret_number}")
+
+            result = is_capo_instruction and has_fret_number
+
+            if result:
+                self.logger.debug(f"🔍 Italian capo detected: '{text_clean[:30]}...'")
+
+            return result
+
+        return False
+
     def _is_kapodaster_line(self, text: str, is_pink: bool) -> bool:
         """Check if line is kapodaster based on content and color"""
         text_lower = text.strip().lower()
@@ -942,12 +1119,15 @@ class ImprovedPDFExtractor:
 
         self.logger.debug(f"      🎯 Chord at x={chord_pixel_x:.1f} -> clamped_x={chord_x_clamped:.1f} -> proportion={proportional_pos:.3f}")
 
-        # Convert verse pixel position to character position using Arial font metrics
+        # Convert verse pixel position to character position using language-specific font metrics
         current_pixel = verse_span_start
         char_position = 0
 
         for i, char in enumerate(verse_text):
+            # Use Arial font metrics for precise character-by-character width calculation
+            # This provides the most accurate positioning regardless of language
             char_width = self.get_char_width(char, font_size)
+
             char_center = current_pixel + (char_width / 2)
 
             if verse_pixel_x <= char_center:
@@ -961,7 +1141,7 @@ class ImprovedPDFExtractor:
         char_position = max(0, min(char_position, len(verse_text)))
 
         char_at_pos = verse_text[char_position] if char_position < len(verse_text) else 'END'
-        self.logger.debug(f"      📍 Mapped to char_pos={char_position} ('{char_at_pos}')")
+        self.logger.debug(f"      📍 Mapped to char_pos={char_position} ('{char_at_pos}') using {'language-specific' if hasattr(self.config, 'get_character_width') else 'Arial'} metrics")
 
         return char_position
     
@@ -1027,61 +1207,158 @@ class ImprovedPDFExtractor:
             self.logger.debug(f"      🎸 Italian parentheses chord '{text}' at pixel_x={pixel_pos:.1f}")
             return chord_positions
 
-        # Handle spaced chord extensions (e.g., "La m", "Re m 9", "Sol 7")
+        # Handle multiple individual chords separated by spaces
+        # For example: "La m Mi" should be treated as two separate chords
         import re
 
-        # Pattern for Italian chord with optional spaced extension
-        # Matches: La, La m, Re m 9, Sol 7, Do maj7, etc.
-        italian_chord_pattern = r'((?:Do|Re|Mi|Fa|Sol|La|Si)(?:[#b]?))\s*(m)?\s*(\d+|maj7|dim|aug)?'
+        # Use a different approach: split by multiple spaces to identify chord units
+        # This handles cases like "Fa maj 7                                            Mi"
+        # where chords are separated by large spaces
 
+        # Split by multiple spaces (4 or more) to separate chord units
+        import re
+        chord_units = re.split(r'\s{4,}', text)
+
+        # Track position in original text to handle duplicate chord names correctly
         current_pos = 0
 
+        for i, unit in enumerate(chord_units):
+            unit = unit.strip()
+            if not unit:
+                continue
+
+            # Check if this unit looks like an Italian chord (including spaced extensions)
+            if self._looks_like_italian_chord_unit(unit):
+                # Find the actual position of this specific occurrence
+                # Start searching from current_pos to avoid finding previous occurrences
+                unit_start = text.find(unit, current_pos)
+                if unit_start >= 0:
+                    # Normalize the chord unit
+                    normalized_chord = self._normalize_merged_italian_chord_in_extractor(unit)
+
+                    # Calculate proportional position within the span
+                    proportional_pos = unit_start / len(text) if len(text) > 0 else 0
+                    pixel_pos = chord_span_start + (proportional_pos * chord_span_width)
+
+                    chord_positions.append((normalized_chord, pixel_pos))
+                    self.logger.debug(f"      🎸 Italian chord unit '{normalized_chord}' (from '{unit}') at text_pos={unit_start}, pixel_x={pixel_pos:.1f}")
+
+                    # Update current_pos to search after this chord for the next one
+                    current_pos = unit_start + len(unit)
+
+        # If we found chord units, return them
+        if chord_positions:
+            return chord_positions
+
+        # Fall back to regex approach for simpler cases
+        # Pattern for Italian chord with optional spaced OR merged extension
+        # Matches: "Re m", "Rem", "Re 7", "Re7", "Sol maj7", etc.
+        italian_chord_pattern = r'((?:Do|Re|Mi|Fa|Sol|La|Si)(?:[#b]?)(?:(?:\s+|)(?:[mb]|maj7|dim|aug|sus[24]|\d+))*)'
+
         # Find all chord matches in the text
-        for match in re.finditer(italian_chord_pattern, text):
-            base_chord = match.group(1)  # e.g., "La"
-            minor = match.group(2)       # e.g., "m"
-            extension = match.group(3)   # e.g., "9"
+        matches = list(re.finditer(italian_chord_pattern, text))
 
-            # Combine base chord with minor and extension
-            full_chord = base_chord
-            if minor:
-                full_chord += f" {minor}"
-            if extension:
-                full_chord += f" {extension}"
-
-            # Check if this looks like a valid Italian chord
-            if self._looks_like_italian_chord(base_chord):
-                # Calculate position in the original text
+        if matches:
+            for match in matches:
+                full_chord_text = match.group(1).strip()
                 match_start = match.start()
+                match_end = match.end()
 
-                # Calculate proportional position within the span
-                proportional_pos = match_start / len(text) if len(text) > 0 else 0
-                pixel_pos = chord_span_start + (proportional_pos * chord_span_width)
+                # Verify this is actually a chord
+                chord_parts = full_chord_text.split()
+                base_chord = chord_parts[0]
 
-                # Use the full chord name (with extension)
-                chord_positions.append((full_chord.strip(), pixel_pos))
-                self.logger.debug(f"      🎸 Italian chord '{full_chord.strip()}' at text_pos={match_start}, pixel_x={pixel_pos:.1f}")
+                if self._looks_like_italian_chord(base_chord):
+                    # Normalize merged chords before adding
+                    normalized_chord = self._normalize_merged_italian_chord_in_extractor(full_chord_text)
 
-        # If no Italian chord patterns found, fall back to word-by-word analysis
+                    # Calculate proportional position within the span
+                    proportional_pos = match_start / len(text) if len(text) > 0 else 0
+                    pixel_pos = chord_span_start + (proportional_pos * chord_span_width)
+
+                    chord_positions.append((normalized_chord, pixel_pos))
+                    self.logger.debug(f"      🎸 Italian chord '{normalized_chord}' (from '{full_chord_text}') at text_pos={match_start}, pixel_x={pixel_pos:.1f}")
+
+        # If regex approach didn't work, fall back to word-by-word analysis
+        # This handles cases where chords are simple single words without extensions
         if not chord_positions:
             words = text.split()
             current_pos = 0
 
-            for i, word in enumerate(words):
+            i = 0
+            while i < len(words):
+                word = words[i]
+
+                # Check if this word contains a merged Italian chord (e.g., "Rem" -> "Re m")
                 if self._looks_like_italian_chord(word):
-                    # Calculate position for this word
-                    proportional_pos = current_pos / len(text) if len(text) > 0 else 0
+                    # Normalize merged chords first
+                    normalized_word = self._normalize_merged_italian_chord_in_extractor(word)
+
+                    # Check if next word is a chord extension (m, 7, 9, etc.)
+                    full_chord = normalized_word
+                    chord_start_pos = current_pos
+
+                    # Look ahead for extensions (only if the current word wasn't already normalized with extension)
+                    if i + 1 < len(words) and not (' ' in normalized_word):
+                        next_word = words[i + 1]
+                        if next_word in ['m', 'b'] or next_word.isdigit() or next_word in ['maj7', 'dim', 'aug']:
+                            full_chord += f" {next_word}"
+                            i += 1  # Skip the extension word
+                            current_pos += len(word) + 1 + len(next_word)  # word + space + extension
+                        else:
+                            current_pos += len(word)
+                    else:
+                        current_pos += len(word)
+
+                    # Calculate proportional position within the span
+                    proportional_pos = chord_start_pos / len(text) if len(text) > 0 else 0
                     pixel_pos = chord_span_start + (proportional_pos * chord_span_width)
 
-                    chord_positions.append((word, pixel_pos))
-                    self.logger.debug(f"      🎸 Italian fallback chord '{word}' at pixel_x={pixel_pos:.1f}")
+                    chord_positions.append((full_chord, pixel_pos))
+                    self.logger.debug(f"      🎸 Italian fallback chord '{full_chord}' (normalized from '{word}') at text_pos={chord_start_pos}, pixel_x={pixel_pos:.1f}")
+                else:
+                    current_pos += len(word)
 
-                # Update position for next word
-                current_pos += len(word)
-                if i < len(words) - 1:  # Add space if not last word
+                # Add space if not last word
+                if i < len(words) - 1:
                     current_pos += 1
 
+                i += 1
+
         return chord_positions
+
+    def _normalize_merged_italian_chord_in_extractor(self, chord: str) -> str:
+        """Normalize merged Italian chords like 'Rem' to 'Re m' during extraction"""
+        if not chord:
+            return chord
+
+        chord = chord.strip()
+
+        # Check for Italian chord roots
+        italian_roots = ['Do', 'Re', 'Mi', 'Fa', 'Sol', 'La', 'Si']
+
+        for root in italian_roots:
+            if chord.startswith(root):
+                remaining = chord[len(root):]
+                if not remaining:
+                    # Just the root chord
+                    return chord
+                elif remaining == 'm':
+                    # Already properly spaced
+                    return f"{root} m"
+                elif remaining.startswith('m') and len(remaining) > 1:
+                    # Merged minor chord with extension like "Rem9" -> "Re m 9"
+                    extension = remaining[1:]
+                    return f"{root} m {extension}"
+                elif remaining in ['7', '9', '6', '4', '2', '11', '13']:
+                    # Merged major chord with extension like "Re7" -> "Re 7"
+                    return f"{root} {remaining}"
+                elif remaining in ['maj7', 'dim', 'aug', 'sus4', 'sus2']:
+                    # Merged chord with complex extension
+                    return f"{root} {remaining}"
+
+        # If no normalization needed, return as-is
+        return chord
 
     def _looks_like_italian_chord(self, text: str) -> bool:
         """Check if text looks like an Italian chord"""
@@ -1097,3 +1374,89 @@ class ImprovedPDFExtractor:
                 return True
 
         return False
+
+    def _looks_like_italian_chord_unit(self, text: str) -> bool:
+        """Check if text looks like an Italian chord unit (including spaced extensions)"""
+        if not text:
+            return False
+
+        text = text.strip()
+        words = text.split()
+
+        if not words:
+            return False
+
+        # First word must be an Italian chord root
+        if not self._looks_like_italian_chord(words[0]):
+            return False
+
+        # If only one word, it's a simple chord
+        if len(words) == 1:
+            return True
+
+        # Check for valid extensions in remaining words
+        valid_extensions = ['m', 'b', 'maj', 'min', 'dim', 'aug', 'add', 'sus4', 'sus2', '+', '°']
+        valid_numbers = ['6', '7', '9', '11', '13']
+
+        for word in words[1:]:
+            # Check if word is a valid extension or number
+            if word not in valid_extensions and word not in valid_numbers:
+                # Check if it's a number (for cases like "7", "9", etc.)
+                if not word.isdigit():
+                    return False
+
+        return True
+
+    def _looks_like_italian_chord_sequence(self, text: str) -> bool:
+        """
+        Check if text looks like a sequence of Italian chords
+        Examples: "Mi La m     Mi 7         La m", "Re m Fa Sol"
+        """
+        if not text:
+            return False
+
+        text = text.strip()
+        words = text.split()
+
+        if len(words) < 2:
+            return False
+
+        # Try to parse chord units that may span multiple words
+        chord_units = []
+        i = 0
+        while i < len(words):
+            word = words[i]
+
+            # Check if current word is an Italian chord root
+            if self._looks_like_italian_chord(word):
+                chord_unit = word
+
+                # Check if next word(s) are chord extensions
+                if i + 1 < len(words):
+                    next_word = words[i + 1]
+                    # Check for extensions like "m", "7", "maj", "dim", etc.
+                    if next_word in ['m', 'b', 'maj', 'min', 'dim', 'aug', 'sus4', 'sus2', '+', '°'] or next_word.isdigit():
+                        chord_unit += f" {next_word}"
+                        i += 1
+
+                        # Check for three-part chords like "Fa maj 7"
+                        if i + 1 < len(words):
+                            third_word = words[i + 1]
+                            if third_word.isdigit() or third_word in ['6', '7', '9', '11', '13']:
+                                chord_unit += f" {third_word}"
+                                i += 1
+
+                chord_units.append(chord_unit)
+                self.logger.debug(f"    🎸 Chord unit: '{chord_unit}'")
+            else:
+                # Not a chord root, skip this word
+                self.logger.debug(f"    🎸 Non-chord word: '{word}'")
+
+            i += 1
+
+        # Calculate ratio of chord units to total words
+        chord_ratio = len(chord_units) / len(words)
+        self.logger.debug(f"    🎸 Chord units: {len(chord_units)}, Total words: {len(words)}, Ratio: {chord_ratio:.2f} (threshold: 0.5)")
+
+        # Lower threshold since we're now counting chord units properly
+        return chord_ratio > 0.5

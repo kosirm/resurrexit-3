@@ -59,11 +59,7 @@ class VerseLine:
                 if lyric_pos < len(self.text):
                     result += self.text[lyric_pos:]
                     lyric_pos = len(self.text)
-                # Check if chord is already bracketed (e.g., from language customizations)
-                if chord.chord.startswith('[') and chord.chord.endswith(']'):
-                    result += chord.chord  # Already bracketed
-                else:
-                    result += f"[{chord.chord}]"  # Add brackets
+                result += f"[{chord.chord}]"
             else:
                 # Normal chord positioning within text
                 target_lyric_pos = chord_pos
@@ -150,7 +146,13 @@ class Song:
         # Title
         lines.append(f"{{title: {self.title}}}")
         lines.append("")
-        
+
+        # Subtitle comments (if present) - add right after title
+        subtitle_comments = [c for c in self.comments if c.comment_type == "subtitle"]
+        for subtitle_comment in subtitle_comments:
+            lines.append(f"{{subtitle: {subtitle_comment.text}}}")
+            lines.append("")
+
         # Kapodaster (if present)
         if self.kapodaster:
             lines.append(self.kapodaster)
@@ -172,7 +174,7 @@ class Song:
                     lines.append(verse_content)
                     lines.append("")
         
-        # General comments at the end
+        # General comments at the end (exclude subtitle comments)
         for comment in self.comments:
             if comment.comment_type == "general":
                 lines.append(comment.to_chordpro())
