@@ -10,8 +10,9 @@ Do, Do maj7, Do 7, Do 6, Do m Do#, Do# maj7, Do# 7, Do# 6, Do#m Re, Re maj7, Re 
 
 PLEASE NOTE THAT SPACES ARE NOT USED STRICTLY (due to OCR errors) SO WE CAN HAVE FA# 7 OR FA#7, SO THESE SHOULD BE TREATED AS THE SAME CHORD !!!
 
-In Italian we have some chords like this: Re m 9 (note space between Re and m andspace between m and 9) !!!
+In Italian we have some chords like this: Re m 9 (note space between Re and m AND space between m and 9) !!!
 Sometimes chords are in parenthesis like this: (Sol 7). In such a case keep parenthesis and write chord as [(Sol7)].
+Sometimes chords can be written like this: Re m or like this Rem. In both cases chord should be parsed as [Re m].
 __________________________________________________
 
 Main major and minor chords in different notations:

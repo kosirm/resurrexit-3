@@ -6,7 +6,7 @@ maintaining the universal architecture for multiple languages.
 """
 
 import logging
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Tuple
 from pathlib import Path
 
 from core.models import Song, Verse, VerseLine, Comment, Chord
@@ -88,6 +88,9 @@ class ImprovedUniversalParser:
 
         # Apply language-specific customizations
         if self.customizations:
+            # Set the current file for file-specific customizations
+            if hasattr(self.customizations, 'set_current_file'):
+                self.customizations.set_current_file(filename)
             song.verses = self.customizations.apply_customizations(song.verses, None)
 
         # Apply final customizations to the song
@@ -108,15 +111,28 @@ class ImprovedUniversalParser:
         
         # Extract title from title lines (should be at the top)
         title = self._extract_title_from_classified_lines(title_lines, song_name)
-        
+
+        # Extract subtitle lines and convert to comments (Italian-specific)
+        text_lines, subtitle_comments = self._extract_subtitle_lines(text_lines)
+
+        # Extract capo lines and convert to kapodaster (Italian-specific)
+        text_lines, capo_instruction = self._extract_capo_lines(text_lines)
+
         # Extract kapodaster from kapodaster lines
         kapodaster = self._extract_kapodaster_from_classified_lines(kapodaster_lines)
-        
+
+        # Use capo instruction if no kapodaster was found
+        if not kapodaster and capo_instruction:
+            kapodaster = capo_instruction
+
         # Move inline comments from comment_lines to text_lines for proper processing
         text_lines, comment_lines = self._separate_inline_comments(text_lines, comment_lines)
 
         # Extract comments from comment lines (should be at the bottom)
         comments = self._extract_comments_from_classified_lines(comment_lines)
+
+        # Add subtitle comments to the beginning of comments list
+        comments = subtitle_comments + comments
 
         # Parse verses with span-based chord positioning (only from text_lines)
         verses = self._parse_verses_with_span_positioning(text_lines, chord_lines, customization)
@@ -183,6 +199,69 @@ class ImprovedUniversalParser:
 
         self.logger.debug(f"💬 COMMENTS (from classification): {len(comments)} found")
         return comments
+
+    def _extract_subtitle_lines(self, text_lines: List[Dict]) -> Tuple[List[Dict], List[Comment]]:
+        """Extract subtitle lines and convert them to comments"""
+        remaining_text_lines = []
+        subtitle_comments = []
+
+        for line_data in text_lines:
+            if line_data.get('is_subtitle', False):
+                # Convert subtitle line to comment
+                subtitle_text = line_data['text'].strip()
+                subtitle_comment = Comment(text=subtitle_text, comment_type="subtitle")
+                subtitle_comments.append(subtitle_comment)
+                self.logger.debug(f"📄 Converted subtitle to comment: '{subtitle_text}'")
+            else:
+                remaining_text_lines.append(line_data)
+
+        return remaining_text_lines, subtitle_comments
+
+    def _extract_capo_lines(self, text_lines: List[Dict]) -> Tuple[List[Dict], Optional[str]]:
+        """Extract capo lines and convert them to kapodaster instruction"""
+        remaining_text_lines = []
+        capo_instruction = None
+
+        for line_data in text_lines:
+            if line_data.get('is_capo', False):
+                # Convert capo line to kapodaster instruction
+                capo_text = line_data['text'].strip()
+                capo_number = self._extract_capo_number(capo_text)
+                if capo_number:
+                    capo_instruction = f"{{capo: {capo_number}}}"
+                    self.logger.debug(f"🎸 Converted capo to kapodaster: '{capo_text}' -> {capo_instruction}")
+            else:
+                remaining_text_lines.append(line_data)
+
+        return remaining_text_lines, capo_instruction
+
+    def _extract_capo_number(self, text: str) -> Optional[int]:
+        """Extract capo fret number from Italian capo instruction"""
+        if not text:
+            return None
+
+        text_clean = text.strip().lower()
+
+        # Roman numeral to number mapping
+        roman_to_number = {
+            'i': 1, 'ii': 2, 'iii': 3, 'iv': 4, 'v': 5,
+            'vi': 6, 'vii': 7, 'viii': 8, 'ix': 9, 'x': 10
+        }
+
+        import re
+
+        # Look for Roman numerals first
+        roman_match = re.search(r'\b(i{1,3}|iv|v|vi{0,3}|ix|x)\b', text_clean)
+        if roman_match:
+            roman = roman_match.group(1)
+            return roman_to_number.get(roman)
+
+        # Look for Arabic numerals
+        number_match = re.search(r'\b(\d+)\s*(tasto|fret)\b', text_clean)
+        if number_match:
+            return int(number_match.group(1))
+
+        return None
     
     def _parse_verses_with_span_positioning(self, text_lines: List[Dict], chord_lines: List[Dict], customization=None) -> List[Verse]:
         """Parse verses using span-based chord positioning - enhanced version"""
@@ -462,10 +541,23 @@ class ImprovedUniversalParser:
         if song.title:
             chordpro_lines.append(f"{{title: {song.title}}}")
             chordpro_lines.append("")
-        
+
+        # Add subtitle comments right after title
+        subtitle_comments = [c for c in song.comments if c.comment_type == "subtitle"]
+        for subtitle_comment in subtitle_comments:
+            chordpro_lines.append(f"{{subtitle: {subtitle_comment.text}}}")
+            chordpro_lines.append("")
+
         # Add kapodaster if present
         if song.kapodaster:
-            chordpro_lines.append(f"{{comment: {song.kapodaster}}}")
+            # Check if it's already in ChordPro format (like {capo: 4})
+            kapodaster_clean = song.kapodaster.strip()
+            if kapodaster_clean.startswith("{") and kapodaster_clean.endswith("}"):
+                # Already in ChordPro format, use as-is
+                chordpro_lines.append(kapodaster_clean)
+            else:
+                # Wrap in comment format for Croatian-style kapodaster
+                chordpro_lines.append(f"{{comment: {kapodaster_clean}}}")
             chordpro_lines.append("")
         
         # Process verses
@@ -491,8 +583,9 @@ class ImprovedUniversalParser:
             
             chordpro_lines.append("")
         
-        # Add comments at the bottom
-        for comment in song.comments:
+        # Add general comments at the bottom (exclude subtitle comments)
+        general_comments = [c for c in song.comments if c.comment_type != "subtitle"]
+        for comment in general_comments:
             chordpro_lines.append(f"{{comment: {comment.text}}}")
         
         return '\n'.join(chordpro_lines)
